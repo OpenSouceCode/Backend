@@ -33,7 +33,7 @@ Contributing to open source can be a rewarding way to learn, teach, and build ex
 Navigate into your new site’s directory and start it up.
 
    ```sh
-   npm run dev: start
+   npm run dev:start
    ```
 **Open the source code and start editing!**
 
