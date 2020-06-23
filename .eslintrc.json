@@ -5,13 +5,8 @@
     "node": true,
     "es6": true
   },
-  "extends": [
-    "prettier",
-    "airbnb-base"
-  ],
-  "plugins": [
-    "prettier"
-  ],
+  "extends": ["plugin:prettier/recommended", "airbnb-base"],
+  "plugins": ["prettier"],
   "globals": {
     "Atomics": "readonly",
     "SharedArrayBuffer": "readonly"
@@ -20,6 +15,7 @@
     "ecmaVersion": 11
   },
   "rules": {
-    "prettier/prettier": "error"
+    "implicit-arrow-linebreak": "warn",
+    "no-async-promise-executor": "warn"
   }
 }
