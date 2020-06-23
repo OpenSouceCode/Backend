@@ -1,5 +1,6 @@
 const create = require('../../create');
 const { repoJob } = require('../../../jobs/github');
+const logger = require('../../../logger');
 
 module.exports = {
   getRepo: create(async (req, res) => {
@@ -7,7 +8,7 @@ module.exports = {
       const data = await repoJob();
       res.json(data);
     } catch (error) {
-      console.log(error);
+      logger.log(error);
       res.status(500).send();
     }
   }),

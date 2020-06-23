@@ -2,13 +2,14 @@ const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
-const logger = require('morgan');
+const morgan = require('morgan');
+const logger = require('./src/logger');
 
 const indexRouter = require('./src/routes');
 
 const app = express();
 
-app.use(logger('dev'));
+app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -34,7 +35,7 @@ app.use((error, req, res, _next) => {
     }
     res.status(error.status).json(obj);
   } else {
-    console.error(error);
+    logger.error(error);
     res.status(500).json({ message: 'Server error.' });
   }
 });

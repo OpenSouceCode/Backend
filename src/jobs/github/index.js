@@ -3,6 +3,7 @@
 const axios = require('axios');
 const querystring = require('querystring');
 const config = require('../../config');
+const logger = require('../../logger');
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -64,17 +65,17 @@ const repoJob = async () => {
       let page = 1;
       let fullData = [];
       let langRetries = 0;
-      console.log(`Lang: ${lang}`);
+      logger.info(`Lang: ${lang}`);
 
       do {
-        console.log(`\tPage: ${page}`);
+        logger.info(`\tPage: ${page}`);
         const query = querystring.stringify({
           q: `language:${lang}`,
           sort: 'sort',
           page,
         });
         try {
-          console.log('\tFetching...');
+          logger.info('\tFetching...');
           const {
             data,
             resetTime,
@@ -83,18 +84,19 @@ const repoJob = async () => {
           if (resetTime) {
             const delayTime = resetTime * 1000 - Date.now() + 5000;
             langRetries += 1;
-            console.log(`\tSleeping for: ${delayTime}`);
+            logger.info(`\tSleeping for: ${delayTime}`);
             await sleep(delayTime);
-            console.log('\tAwake now');
+            logger.info('\tAwake now');
           }
           fullData = fullData.concat(data.items);
           hasNextPage = _hasNextPage;
           page += 1;
-          console.log(`\thasNextPage: ${hasNextPage}`);
+          logger.info(`\thasNextPage: ${hasNextPage}`);
           if (page >= 10) break;
         } catch (error) {
+          logger.error(error);
           totalRetries += 1;
-          console.log(`\tRetrying: ${totalRetries}`);
+          logger.info(`\tRetrying: ${totalRetries}`);
         }
       } while (hasNextPage && totalRetries < 10 && langRetries < 10);
       allData[lang] = fullData;
@@ -106,7 +108,7 @@ const repoJob = async () => {
     }
     return det;
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return null;
   }
 };
