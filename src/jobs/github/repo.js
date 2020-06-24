@@ -1,13 +1,71 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
 const axios = require('axios');
+const { CronJob } = require('cron');
 const querystring = require('querystring');
+const { db } = require('../../firebase');
 const config = require('../../config');
 const logger = require('../../logger');
+
+const FIELDS_TO_SAVE = [
+  'id',
+  'node_id',
+  'full_name',
+  'http_url',
+  'description',
+  'created_at',
+  'updated_at',
+  'pushed_at',
+  'git_url',
+  'ssh_url',
+  'homepage',
+  'language',
+  'license',
+  'forks',
+  'open_issues',
+  'watchers',
+  'default_branch',
+];
+
+const LANGUAGES = [
+  'javascript',
+  'java',
+  'c',
+  'cpp',
+  'go',
+  'python',
+  'php',
+  'css',
+  'html',
+  'swift',
+  'kotlin',
+  'typescript',
+];
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
+
+const storeRepo = async (data) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const batch = db.batch();
+
+      for (const elem of data) {
+        const cloneElem = {};
+        for (const key of FIELDS_TO_SAVE) {
+          if (elem[key]) cloneElem[key] = elem[key];
+        }
+        const ref = db.collection('repositories').doc(`${cloneElem.node_id}`);
+        batch.set(ref, cloneElem);
+      }
+
+      await batch.commit();
+      resolve();
+    } catch (error) {
+      reject(error);
+    }
+  });
 
 const fetchRepos = async (query) =>
   new Promise(async (resolve, reject) => {
@@ -26,6 +84,11 @@ const fetchRepos = async (query) =>
       let resetTime = headers['x-ratelimit-reset'];
       const { link } = headers;
       let hasNextPage = false;
+
+      if (!(data && data.items)) {
+        reject(new Error('Data items does not exist.'));
+      }
+
       if (link) {
         const linksArray = link.split(',');
         for (const elem of linksArray) {
@@ -54,18 +117,18 @@ const fetchRepos = async (query) =>
     }
   });
 
-const repoJob = async () => {
+const langRepoTask = async () => {
   try {
-    const languages = ['javascript', 'java', 'c', 'cpp'];
+    logger.info('Starting Language Repository Job');
     let totalRetries = 0;
-    const allData = {};
+    const det = {};
 
-    for (const lang of languages) {
+    for (const lang of LANGUAGES) {
       let hasNextPage = true;
       let page = 1;
-      let fullData = [];
       let langRetries = 0;
       logger.info(`Lang: ${lang}`);
+      det[lang] = 0;
 
       do {
         logger.info(`\tPage: ${page}`);
@@ -73,6 +136,7 @@ const repoJob = async () => {
           q: `language:${lang}`,
           sort: 'sort',
           page,
+          per_page: 100,
         });
         try {
           logger.info('\tFetching...');
@@ -88,24 +152,22 @@ const repoJob = async () => {
             await sleep(delayTime);
             logger.info('\tAwake now');
           }
-          fullData = fullData.concat(data.items);
+          logger.info(`\tFetched: ${data.items.length}`);
+          det[lang] += data.items.length;
           hasNextPage = _hasNextPage;
-          page += 1;
           logger.info(`\thasNextPage: ${hasNextPage}`);
-          if (page >= 10) break;
+          await storeRepo(data.items);
+          page += 1;
         } catch (error) {
           logger.error(error);
           totalRetries += 1;
           logger.info(`\tRetrying: ${totalRetries}`);
         }
       } while (hasNextPage && totalRetries < 10 && langRetries < 10);
-      allData[lang] = fullData;
     }
 
-    const det = {};
-    for (const key of Object.keys(allData)) {
-      det[key] = allData[key].length;
-    }
+    logger.info('Language Repository Job Completed');
+    logger.info(`${JSON.stringify(det)}`);
     return det;
   } catch (error) {
     logger.error(error);
@@ -113,6 +175,11 @@ const repoJob = async () => {
   }
 };
 
+const langRepoJob = new CronJob(
+  '0 00,02,04,06,08,10,12,14,16,18,20,22 * * *',
+  langRepoTask,
+);
+
 module.exports = {
-  repoJob,
+  langRepoJob,
 };

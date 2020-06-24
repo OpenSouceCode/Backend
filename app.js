@@ -7,6 +7,9 @@ const logger = require('./src/logger');
 
 const indexRouter = require('./src/routes');
 
+// Start cron job
+require('./src/jobs/index');
+
 const app = express();
 
 app.use(morgan('dev'));

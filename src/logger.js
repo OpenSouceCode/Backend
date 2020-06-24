@@ -1,11 +1,28 @@
 const winston = require('winston');
 
+const errorStackFormat = winston.format((info) => {
+  if (info instanceof Error) {
+    return {
+      ...info,
+      stack: info.stack,
+      message: info.message,
+    };
+  }
+  return info;
+});
+
 const logger = winston.createLogger({
   level: 'info',
   format: winston.format.combine(
+    errorStackFormat(),
     winston.format.splat(),
-    winston.format.timestamp(),
-    winston.format.simple(),
+    winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+    winston.format.printf(
+      (info) =>
+        `[${info.timestamp}] ${info.level}: ${info.message} ${
+          info.stack ? `\n${info.stack}` : ''
+        }`,
+    ),
   ),
   transports: [
     //
@@ -24,7 +41,18 @@ const logger = winston.createLogger({
 if (process.env.NODE_ENV !== 'production') {
   logger.add(
     new winston.transports.Console({
-      format: winston.format.simple(),
+      format: winston.format.combine(
+        errorStackFormat(),
+        winston.format.splat(),
+        winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+        winston.format.colorize(),
+        winston.format.printf(
+          (info) =>
+            `[${info.timestamp}] ${info.level} ${info.message} ${
+              info.stack ? `\n${info.stack}` : ''
+            }`,
+        ),
+      ),
     }),
   );
 }
