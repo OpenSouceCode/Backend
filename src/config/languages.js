@@ -1,0 +1,27 @@
+const LANGUAGES = [
+  'javascript',
+  'java',
+  'c',
+  'cpp',
+  'go',
+  'python',
+  'php',
+  'css',
+  'html',
+  'swift',
+  'kotlin',
+  'typescript',
+  'shell',
+  'Objective-C',
+  'ruby',
+  'Jupyter-Notebook',
+  'C#',
+  'Rust',
+  'Scala',
+  'Dart',
+  'Lua',
+  'Elixir',
+  'Julia',
+];
+
+module.exports = LANGUAGES;

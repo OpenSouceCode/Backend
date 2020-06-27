@@ -6,41 +6,13 @@ const querystring = require('querystring');
 const { db } = require('../../firebase');
 const config = require('../../config');
 const logger = require('../../logger');
+const ORGANIZATIONS = require('../../config/organizations');
+const FIELDS_TO_SAVE = require('../../config/repoFields');
 
-const FIELDS_TO_SAVE = [
-  'id',
-  'node_id',
-  'full_name',
-  'http_url',
-  'description',
-  'created_at',
-  'updated_at',
-  'pushed_at',
-  'git_url',
-  'ssh_url',
-  'homepage',
-  'language',
-  'license',
-  'forks',
-  'open_issues',
-  'watchers',
-  'default_branch',
-];
-
-const LANGUAGES = [
-  'javascript',
-  'java',
-  'c',
-  'cpp',
-  'go',
-  'python',
-  'php',
-  'css',
-  'html',
-  'swift',
-  'kotlin',
-  'typescript',
-];
+const MAX_RETRIES = 10;
+const MAX_SLEEP_RETRIES = 10;
+const MAX_PAGES = 2;
+const PER_PAGE_COUNT = 100;
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -52,9 +24,24 @@ const storeRepo = async (data) =>
       const batch = db.batch();
 
       for (const elem of data) {
-        const cloneElem = {};
+        const cloneElem = { lastFetched: new Date() };
         for (const key of FIELDS_TO_SAVE) {
-          if (elem[key]) cloneElem[key] = elem[key];
+          const splitKeys = key.split('.');
+          if (
+            splitKeys.length > 1 &&
+            elem[splitKeys[0]] !== undefined &&
+            elem[splitKeys[0]][splitKeys[1]] !== undefined
+          ) {
+            if (cloneElem[splitKeys[0]]) {
+              cloneElem[splitKeys[0]][splitKeys[1]] =
+                elem[splitKeys[0]][splitKeys[1]];
+            } else {
+              cloneElem[splitKeys[0]] = {
+                [splitKeys[1]]: elem[splitKeys[0]][splitKeys[1]],
+              };
+            }
+          }
+          if (elem[key] !== undefined) cloneElem[key] = elem[key];
         }
         const ref = db.collection('repositories').doc(`${cloneElem.node_id}`);
         batch.set(ref, cloneElem);
@@ -117,26 +104,26 @@ const fetchRepos = async (query) =>
     }
   });
 
-const langRepoTask = async () => {
+const orgRepoTask = async () => {
   try {
-    logger.info('Starting Language Repository Job');
+    logger.info('Starting Organization Repository Job');
     let totalRetries = 0;
     const det = {};
 
-    for (const lang of LANGUAGES) {
+    for (const org of ORGANIZATIONS) {
       let hasNextPage = true;
       let page = 1;
       let langRetries = 0;
-      logger.info(`Lang: ${lang}`);
-      det[lang] = 0;
+      logger.info(`Org: ${org}`);
+      det[org] = 0;
 
       do {
         logger.info(`\tPage: ${page}`);
         const query = querystring.stringify({
-          q: `language:${lang}`,
+          q: `org:${org}`,
           sort: 'sort',
           page,
-          per_page: 100,
+          per_page: PER_PAGE_COUNT,
         });
         try {
           logger.info('\tFetching...');
@@ -153,20 +140,25 @@ const langRepoTask = async () => {
             logger.info('\tAwake now');
           }
           logger.info(`\tFetched: ${data.items.length}`);
-          det[lang] += data.items.length;
+          det[org] += data.items.length;
           hasNextPage = _hasNextPage;
           logger.info(`\thasNextPage: ${hasNextPage}`);
           await storeRepo(data.items);
           page += 1;
+          if (page > MAX_PAGES) break;
         } catch (error) {
           logger.error(error);
           totalRetries += 1;
           logger.info(`\tRetrying: ${totalRetries}`);
         }
-      } while (hasNextPage && totalRetries < 10 && langRetries < 10);
+      } while (
+        hasNextPage &&
+        totalRetries < MAX_RETRIES &&
+        langRetries < MAX_SLEEP_RETRIES
+      );
     }
 
-    logger.info('Language Repository Job Completed');
+    logger.info('Organization Repository Job Completed');
     logger.info(`${JSON.stringify(det)}`);
     return det;
   } catch (error) {
@@ -175,11 +167,8 @@ const langRepoTask = async () => {
   }
 };
 
-const langRepoJob = new CronJob(
-  '0 00,02,04,06,08,10,12,14,16,18,20,22 * * *',
-  langRepoTask,
-);
+const orgRepoJob = new CronJob('0 02,06,10,14,18,22 * * *', orgRepoTask);
 
 module.exports = {
-  langRepoJob,
+  orgRepoJob,
 };

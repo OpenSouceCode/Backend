@@ -16,6 +16,7 @@
   },
   "rules": {
     "implicit-arrow-linebreak": "warn",
-    "no-async-promise-executor": "warn"
+    "no-async-promise-executor": "warn",
+    "operator-linebreak": "warn"
   }
 }
