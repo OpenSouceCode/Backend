@@ -12,10 +12,11 @@ const repoCache = db.collection('repoCache').doc('lastRepoName');
 const pulls = db.collection('pulls');
 const repos = db.collection('repositories').orderBy('node_id', 'asc');
 
-const sleep = (time) =>
+const sleep = (time) => {
   new Promise((resolve) => {
     setTimeout(resolve, time);
   });
+};
 
 const getRepoName = (fullName) => {
   let name = '';
