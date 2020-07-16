@@ -1,3 +1,5 @@
+/* eslint-disable implicit-arrow-linebreak */
+/* eslint-disable no-async-promise-executor */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
 const axios = require('axios');
@@ -6,6 +8,8 @@ const querystring = require('querystring');
 const { db } = require('../../firebase');
 const config = require('../../config');
 const logger = require('../../logger');
+
+const pulls = db.collection('pulls');
 
 const FIELDS_TO_SAVE = [
   'id',
@@ -45,6 +49,63 @@ const LANGUAGES = [
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
+
+const getRepoName = (fullName) => {
+  let name = '';
+  let slash = false;
+  for (let x = 0; x < fullName.length; x += 1) {
+    if (slash) name += fullName[x];
+    if (fullName[x] === '/') slash = true;
+  }
+  return name;
+};
+
+const fetchAndStorePR = (fullName) =>
+  new Promise((resolve, reject) => {
+    axios
+      .get(`https://api.github.com/repos/${fullName}/pulls`)
+      .then((response) => {
+        const arr = response.data;
+        const length = arr.length < 10 ? arr.length : 10;
+        for (let x = 0; x < length; x += 1) {
+          const PR = {
+            id: arr[x].id,
+            node_id: arr[x].node_id,
+            html_url: arr[x].html_url,
+            state: arr[x].state,
+            labels: arr[x].labels,
+            created_at: arr[x].created_at,
+            number: arr[x].number,
+            title: arr[x].title,
+            body: arr[x].body,
+            updated_at: arr[x].updated_at,
+            closed_at: arr[x].closed_at,
+            merged_at: arr[x].merged_at,
+            user: arr[x].user,
+          };
+          const RepoName = getRepoName(fullName);
+          pulls
+            .doc(`${RepoName} [${x + 1} PR]`)
+            .set(PR)
+            .catch((err) => logger.error(err.message));
+        }
+        resolve();
+      })
+      .catch(async (err) => {
+        if (err.response && err.response.status === 403) {
+          const remainingReq = err.response.headers['x-ratelimit-remaining'];
+          const resetTime = err.response.headers['x-ratelimit-reset'];
+          if (remainingReq <= 0 && resetTime) {
+            const utcSeconds = Number(resetTime);
+            const left = utcSeconds * 1000 - Date.now() + 5000;
+            logger.info(`Sleeping for ${Math.floor(left / (1000 * 60))} mins`);
+            await sleep(left);
+            logger.info('\tAwake Now');
+          }
+        }
+        reject(err);
+      });
+  });
 
 const storeRepo = async (data) =>
   new Promise(async (resolve, reject) => {
@@ -117,6 +178,16 @@ const fetchRepos = async (query) =>
     }
   });
 
+const PrRepoJob = (repos) =>
+  new Promise(async (resolve, reject) => {
+    await repos.forEach(async (repo) => {
+      await fetchAndStorePR(repo).catch((err) => {
+        reject(err);
+      });
+    });
+    resolve();
+  });
+
 const langRepoTask = async () => {
   try {
     logger.info('Starting Language Repository Job');
@@ -157,6 +228,10 @@ const langRepoTask = async () => {
           hasNextPage = _hasNextPage;
           logger.info(`\thasNextPage: ${hasNextPage}`);
           await storeRepo(data.items);
+          await PrRepoJob(data.items).catch((err) => {
+            logger.error(err);
+            PrRepoJob(data.items);
+          });
           page += 1;
         } catch (error) {
           logger.error(error);
