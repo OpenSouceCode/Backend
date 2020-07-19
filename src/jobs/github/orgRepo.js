@@ -34,5 +34,6 @@ const orgRepoTask = createRepoJob({
 const orgRepoJob = new CronJob('0 12 * * *', orgRepoTask);
 
 module.exports = {
+  orgRepoTask,
   orgRepoJob,
 };

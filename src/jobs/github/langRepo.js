@@ -34,5 +34,6 @@ const langRepoTask = createRepoJob({
 const langRepoJob = new CronJob('0 12 * * *', langRepoTask);
 
 module.exports = {
+  langRepoTask,
   langRepoJob,
 };
