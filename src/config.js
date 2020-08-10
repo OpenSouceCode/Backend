@@ -19,6 +19,7 @@ const config = {
     ACCESS_TOKEN: getEnvVariable('GITHUB_ACCESS_TOKEN'),
     USERNAME: getEnvVariable('GITHUB_USERNAME'),
   },
+  MONGODB_URI: getEnvVariable('MONGODB_URI'),
 };
 
 module.exports = config;
