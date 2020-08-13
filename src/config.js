@@ -20,6 +20,7 @@ const config = {
     USERNAME: getEnvVariable('GITHUB_USERNAME'),
   },
   MONGODB_URI: getEnvVariable('MONGODB_URI'),
+  JWT_SECRET: getEnvVariable('JWT_SECRET'),
 };
 
 module.exports = config;
