@@ -7,7 +7,7 @@ const auth = async (req, res, next) => {
   const token = tokenArray[1];
 
   if (!token) {
-    return res.status(401).json({ msg: 'Unauthorized user!' });
+    return res.status(401).json({ message: 'Unauthorized user!' });
   }
 
   // Verify token
