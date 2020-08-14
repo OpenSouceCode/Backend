@@ -3,12 +3,11 @@ const config = require('../config');
 
 const auth = async (req, res, next) => {
   // Get token from header
-  const token = req.header('x-auth-token');
+  const tokenArray = req.header('Authorization').split(' ');
+  const token = tokenArray[1];
 
   if (!token) {
-    return res
-      .status(401)
-      .json({ msg: 'No token found, authorization denied!' });
+    return res.status(401).json({ msg: 'Unauthorized user!' });
   }
 
   // Verify token
@@ -20,7 +19,7 @@ const auth = async (req, res, next) => {
       next();
     });
   } catch (err) {
-    return res.status(500).json({ msg: 'Server error!' });
+    return res.status(403).json({ message: 'Access denied!' });
   }
 };
 
