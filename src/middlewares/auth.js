@@ -3,8 +3,12 @@ const config = require('../config');
 
 const auth = async (req, res, next) => {
   // Get token from header
-  const tokenArray = req.header('Authorization').split(' ');
-  const token = tokenArray[1];
+  let token;
+
+  if (req.header('Authorization')) {
+    const tokenArray = req.header('Authorization').split(' ');
+    token = tokenArray.slice(-1);
+  }
 
   if (!token) {
     return res.status(401).json({ message: 'Unauthorized user!' });
