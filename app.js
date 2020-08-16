@@ -7,6 +7,7 @@ const logger = require('./src/logger');
 const connectDB = require('./src/config/db');
 
 const indexRouter = require('./src/routes');
+const config = require('./src/config');
 
 // Start cron job
 require('./src/jobs/index');
@@ -23,7 +24,9 @@ app.use(cookieParser());
 // eslint-disable-next-line no-undef
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Route middlewares
 app.use('/', indexRouter);
+app.use('/api/', require('./src/routes/auth'));
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
@@ -46,5 +49,8 @@ app.use((error, req, res, _next) => {
     res.status(500).json({ message: 'Server error.' });
   }
 });
+
+const PORT = config.PORT || 3000;
+app.listen(PORT, () => console.log(`App listening on PORT ${PORT}`));
 
 module.exports = app;

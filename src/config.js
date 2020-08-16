@@ -15,11 +15,14 @@ const getEnvVariable = (key) => {
 };
 
 const config = {
+  PORT: getEnvVariable('PORT'),
   GITHUB: {
     ACCESS_TOKEN: getEnvVariable('GITHUB_ACCESS_TOKEN'),
     USERNAME: getEnvVariable('GITHUB_USERNAME'),
   },
   MONGODB_URI: getEnvVariable('MONGODB_URI'),
+  CLIENT_ID: getEnvVariable('CLIENT_ID'),
+  CLIENT_SECRET: getEnvVariable('CLIENT_SECRET'),
 };
 
 module.exports = config;
