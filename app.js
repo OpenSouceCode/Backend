@@ -3,13 +3,10 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
-const logger = require('./src/logger');
+const logger = require('./src/utils/logger');
 const connectDB = require('./src/config/db');
 
 const indexRouter = require('./src/routes');
-
-// Start cron job
-require('./src/jobs/index');
 
 // Connect Database
 connectDB();

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const config = require('./index');
-const logger = require('../logger');
+const logger = require('../utils/logger');
 
 const db = config.DB.URL;
 
