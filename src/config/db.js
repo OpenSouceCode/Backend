@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
-const config = require('../config');
+const config = require('./index');
+const logger = require('../logger');
 
-const db = config.MONGODB_URI;
+const db = config.DB.URL;
 
 const connectDB = async () => {
   try {
@@ -12,9 +13,9 @@ const connectDB = async () => {
       useUnifiedTopology: true,
     });
 
-    console.log('MongoDB connected!');
+    logger.info('MongoDB connected!');
   } catch (err) {
-    console.error(err.message);
+    logger.error(err);
     // Exit process with failure
     process.exit(1);
   }

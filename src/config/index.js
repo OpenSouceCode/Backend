@@ -19,6 +19,13 @@ const config = {
     ACCESS_TOKEN: getEnvVariable('GITHUB_ACCESS_TOKEN'),
     USERNAME: getEnvVariable('GITHUB_USERNAME'),
   },
+  DB: {
+    URL: getEnvVariable('DB_URL'),
+  },
+  JWT: {
+    SECRET: getEnvVariable('JWT_SECRET'),
+    EXPIRES_IN: getEnvVariable('JWT_EXPIRES_IN'),
+  },
 };
 
 module.exports = config;

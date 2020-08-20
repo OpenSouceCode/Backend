@@ -13,41 +13,29 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  profileImage: {
+    type: String,
+  },
   oAuth: {
     github: {
+      id: {
+        type: String,
+      },
+      node_id: {
+        type: String,
+      },
       profileUrl: {
         type: String,
-        default: null,
       },
       accessToken: {
         type: String,
-        default: null,
       },
-    },
-  },
-  about: {
-    title: {
-      type: String,
-    },
-    bio: {
-      type: String,
-    },
-    skills: {
-      type: String,
-    },
-  },
-  socialProfiles: {
-    website: {
-      type: String,
-    },
-    github: {
-      type: String,
-    },
-    linkedin: {
-      type: String,
-    },
-    twitter: {
-      type: String,
+      username: {
+        type: String,
+      },
+      avatar_url: {
+        type: String,
+      },
     },
   },
 });
