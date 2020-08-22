@@ -21,12 +21,15 @@ const auth = async (req, _res, next) => {
       return next(createError(401, 'Unauthorized user.'));
     }
 
-    const user = await User.countDocuments(payload.sub);
+    const user = await User.findById(payload.sub).select(
+      '_id oAuth.github.accessToken',
+    );
     if (!user) {
       return next(createError(401, 'Unauthorized user.'));
     }
 
-    req.user = { id: payload.sub };
+    req.user = user;
+    req.accessToken = user.oAuth.github.accessToken;
     return next();
   } catch (error) {
     return next(createError(401, 'Unauthorized user.'));

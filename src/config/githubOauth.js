@@ -11,16 +11,28 @@ passport.use(
       callbackURL: `${config.API_URL}/auth/github/callback`,
     },
 
-    async (accessToken, refreshToken, profile, cb) => {
+    async (accessToken, _refreshToken, profile, cb) => {
       try {
         // eslint-disable-next-line no-underscore-dangle
         const userData = profile._json;
+        if (!accessToken) {
+          throw new Error('No access token');
+        }
+
         const existingUser = await User.findOne({
           'oAuth.github.id': userData.id,
         }).select('_id name');
 
         let currentUser = existingUser;
-        if (!currentUser) {
+        if (!accessToken) {
+          throw new Error('No access token');
+        }
+        if (currentUser) {
+          await User.updateOne(
+            { 'oAuth.github.id': userData.id },
+            { $set: { 'oAuth.github.accessToken': accessToken } },
+          );
+        } else {
           currentUser = await User.create({
             name: userData.name,
             email: userData.email,
@@ -31,7 +43,6 @@ passport.use(
                 node_id: userData.node_id,
                 profileUrl: userData.html_url,
                 accessToken,
-                refreshToken,
                 username: userData.login,
                 avatar_url: userData.avatar_url,
               },
