@@ -4,6 +4,7 @@ const router = express.Router();
 
 const controller = require('../../controllers/v1/auth');
 
-router.post('/github', controller.githubAuth);
+router.get('/github', controller.githubAuth);
+router.get('/github/callback', controller.githubOAuthCallback);
 
 module.exports = router;

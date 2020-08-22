@@ -1,29 +1,35 @@
-const jwt = require('jsonwebtoken');
-const config = require('../config');
+const createError = require('http-errors');
+const jwt = require('../utils/jwt');
+const User = require('../models/User');
 
-const auth = async (req, res, next) => {
-  // Get token from header
-  let token;
-
-  if (req.header('Authorization')) {
-    const tokenArray = req.header('Authorization').split(' ');
-    token = tokenArray.slice(-1);
-  }
-
-  if (!token) {
-    return res.status(401).json({ message: 'Unauthorized user!' });
-  }
-
-  // Verify token
+const auth = async (req, _res, next) => {
   try {
-    return jwt.verify(token, config.JWT_SECRET, (error, decoded) => {
-      if (error) throw error;
+    const header = req.get('Authorization');
+    if (!header) {
+      return next(createError(401, 'Unauthorized user.'));
+    }
+    const splitedHeader = header.split(' ');
+    let token;
+    if (splitedHeader.length === 2) {
+      // eslint-disable-next-line prefer-destructuring
+      token = splitedHeader[1];
+    }
 
-      req.user = decoded.user;
-      next();
-    });
-  } catch (err) {
-    return res.status(401).json({ message: 'Unauthorized user!' });
+    const payload = await jwt.verify(token);
+
+    if (!payload) {
+      return next(createError(401, 'Unauthorized user.'));
+    }
+
+    const user = await User.countDocuments(payload.sub);
+    if (!user) {
+      return next(createError(401, 'Unauthorized user.'));
+    }
+
+    req.user = { id: payload.sub };
+    return next();
+  } catch (error) {
+    return next(createError(401, 'Unauthorized user.'));
   }
 };
 

@@ -3,6 +3,7 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
+const passport = require('passport');
 const logger = require('./src/utils/logger');
 const connectDB = require('./src/config/db');
 
@@ -17,8 +18,13 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(passport.initialize());
 // eslint-disable-next-line no-undef
 app.use(express.static(path.join(__dirname, 'public')));
+
+passport.serializeUser((user, cb) => {
+  cb(null, user);
+});
 
 app.use('/', indexRouter);
 

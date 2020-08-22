@@ -21,6 +21,8 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.28",
     "morgan": "~1.9.1",
+    "passport": "^0.4.1",
+    "passport-github": "^1.1.0",
     "prettier": "^2.0.5",
     "winston": "^3.3.2"
   },

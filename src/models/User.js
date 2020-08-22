@@ -5,14 +5,6 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  email: {
-    type: String,
-    required: true,
-  },
-  username: {
-    type: String,
-    required: true,
-  },
   profileImage: {
     type: String,
   },
@@ -30,15 +22,25 @@ const UserSchema = new mongoose.Schema({
       accessToken: {
         type: String,
       },
+      refreshToken: {
+        type: String,
+      },
       username: {
         type: String,
       },
       avatar_url: {
         type: String,
       },
+      email: {
+        type: String,
+      },
     },
   },
 });
+
+UserSchema.statics.getProfileFields = function () {
+  return ['_id', 'name', 'profileImage'];
+};
 
 const User = mongoose.model('User', UserSchema);
 

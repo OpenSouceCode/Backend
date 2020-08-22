@@ -16,8 +16,8 @@ const getEnvVariable = (key) => {
 
 const config = {
   GITHUB: {
-    ACCESS_TOKEN: getEnvVariable('GITHUB_ACCESS_TOKEN'),
-    USERNAME: getEnvVariable('GITHUB_USERNAME'),
+    CLIENT_ID: getEnvVariable('GITHUB_CLIENT_ID'),
+    SECRET: getEnvVariable('GITHUB_CLIENT_SECRET'),
   },
   DB: {
     URL: getEnvVariable('DB_URL'),
@@ -26,6 +26,8 @@ const config = {
     SECRET: getEnvVariable('JWT_SECRET'),
     EXPIRES_IN: getEnvVariable('JWT_EXPIRES_IN'),
   },
+  API_URL: getEnvVariable('API_URL'),
+  FRONTEND_LOGIN_URL: getEnvVariable('FRONTEND_LOGIN_URL'),
 };
 
 module.exports = config;
