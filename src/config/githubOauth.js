@@ -24,9 +24,6 @@ passport.use(
         }).select('_id name');
 
         let currentUser = existingUser;
-        if (!accessToken) {
-          throw new Error('No access token');
-        }
         if (currentUser) {
           await User.updateOne(
             { 'oAuth.github.id': userData.id },
