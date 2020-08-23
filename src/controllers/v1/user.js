@@ -9,4 +9,11 @@ module.exports = {
 
     res.json({ data: user });
   }),
+
+  updateProfile: create(async (req, res) => {
+    const { profileImage } = req.body;
+
+    const user = await User.findOneAndUpdate(req.user.id, { profileImage });
+    res.json({ data: user });
+  }),
 };
