@@ -43,8 +43,8 @@ module.exports = {
 
   searchIssues: async (
     accessToken,
-    // eslint-disable-next-line object-curly-newline
-    { milestone, sort, assignee, owner, repos },
+    // eslint-disable-next-line camelcase, object-curly-newline
+    { milestone, sort, assignee, owner, repos, page, per_page },
   ) => {
     // eslint-disable-next-line no-new
     new Promise(async (resolve, reject) => {
@@ -53,6 +53,8 @@ module.exports = {
           milestone,
           sort,
           assignee,
+          page,
+          per_page,
         });
 
         const resp = await http.get(
@@ -62,7 +64,22 @@ module.exports = {
           },
         );
 
-        resolve({ data: resp.data });
+        const { link } = resp.headers;
+        let hasNextPage = false;
+
+        if (link) {
+          const linksArray = link.split(',');
+          // eslint-disable-next-line no-restricted-syntax
+          for (const elem of linksArray) {
+            const linkArray = elem.split(';');
+            if (linkArray.length > 1 && linkArray[1].includes('rel="next"')) {
+              hasNextPage = true;
+              break;
+            }
+          }
+        }
+
+        resolve({ data: resp.data, hasNextPage });
       } catch (error) {
         reject(error);
       }
