@@ -6,7 +6,6 @@ const morgan = require('morgan');
 const passport = require('passport');
 const logger = require('./src/utils/logger');
 const connectDB = require('./src/config/db');
-const config = require('./src/config/index');
 
 const indexRouter = require('./src/routes');
 
@@ -50,8 +49,5 @@ app.use((error, req, res, _next) => {
     res.status(500).json({ message: 'Server error.' });
   }
 });
-
-const PORT = config.PORT || 8000;
-app.listen(PORT, () => console.log(`Server listening on PORT ${PORT}`));
 
 module.exports = app;
