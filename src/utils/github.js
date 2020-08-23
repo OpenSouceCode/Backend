@@ -40,4 +40,40 @@ module.exports = {
         reject(error);
       }
     }),
+
+  // eslint-disable-next-line camelcase, object-curly-newline
+  searchPullRequests: async (accessToken, { owner, repos, page, per_page }) =>
+    new Promise(async (resolve, reject) => {
+      try {
+        const queryStr = querystring.stringify({
+          page,
+          per_page,
+        });
+        const resp = await http.get(
+          `/repos/${owner}/${repos}/pulls?${queryStr}`,
+          {
+            headers: { Authorization: `token ${accessToken}` },
+          },
+        );
+
+        const { link } = resp.headers;
+        let hasNextPage = false;
+
+        if (link) {
+          const linksArray = link.split(',');
+          // eslint-disable-next-line no-restricted-syntax
+          for (const elem of linksArray) {
+            const linkArray = elem.split(';');
+            if (linkArray.length > 1 && linkArray[1].includes('rel="next"')) {
+              hasNextPage = true;
+              break;
+            }
+          }
+        }
+
+        resolve({ data: resp.data, hasNextPage });
+      } catch (error) {
+        reject(error);
+      }
+    }),
 };
