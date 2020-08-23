@@ -21,4 +21,19 @@ module.exports = {
 
     res.json(resp);
   }),
+
+  getIssues: create(async (req, res) => {
+    const { milestone = '*', sort = 'stars', assignee = '*' } = req.query;
+    const { owner, repos } = req.params;
+
+    const resp = await github.searchIssues(req.accessToken, {
+      milestone,
+      sort,
+      assignee,
+      owner,
+      repos,
+    });
+
+    res.json(resp);
+  }),
 };

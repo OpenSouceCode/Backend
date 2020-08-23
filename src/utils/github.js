@@ -40,4 +40,32 @@ module.exports = {
         reject(error);
       }
     }),
+
+  searchIssues: async (
+    accessToken,
+    // eslint-disable-next-line object-curly-newline
+    { milestone, sort, assignee, owner, repos },
+  ) => {
+    // eslint-disable-next-line no-new
+    new Promise(async (resolve, reject) => {
+      try {
+        const queryStr = querystring.stringify({
+          milestone,
+          sort,
+          assignee,
+        });
+
+        const resp = await http.get(
+          `/repos/${owner}/${repos}/issues?${queryStr}`,
+          {
+            headers: { Authorization: `token ${accessToken}` },
+          },
+        );
+
+        resolve({ data: resp.data });
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
 };
