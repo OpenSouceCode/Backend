@@ -13,7 +13,9 @@ module.exports = {
   updateProfile: create(async (req, res) => {
     const { profileImage } = req.body;
 
-    const user = await User.findOneAndUpdate(req.user.id, { profileImage });
+    const user = await User.findOneAndUpdate(req.user.id, {
+      profileImage,
+    }).select(User.getProfileFields().join(' '));
     res.json({ data: user });
   }),
 };
