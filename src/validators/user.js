@@ -1,7 +1,7 @@
 const { body } = require('express-validator');
 
 module.exports = {
-  checkName: [
+  updateProfile: [
     body('name').isString().notEmpty().withMessage('Name is required'),
   ],
 };

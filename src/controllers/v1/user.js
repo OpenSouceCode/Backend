@@ -11,28 +11,25 @@ module.exports = {
     res.json({ data: user });
   }),
 
-  updateProfile: create(async (req, res) => {
-    create.options = {
+  updateProfile: create(
+    async (req, res) => {
+      const { name } = req.body;
+
+      const user = await User.findOneAndUpdate(
+        req.user.id,
+        {
+          name,
+        },
+        { new: true },
+      ).select(User.getProfileFields().join(' '));
+
+      res.json({ data: user });
+    },
+    {
       validation: {
-        validators: validators.checkName,
-        throwError: !req.body.name,
+        validators: validators.updateProfile,
+        throwError: true,
       },
-    };
-
-    if (create.options.validation.throwError) {
-      res.json('Name is required!');
-    }
-
-    const { name } = req.body;
-
-    const user = await User.findOneAndUpdate(
-      req.user.id,
-      {
-        name,
-      },
-      { new: true },
-    ).select(User.getProfileFields().join(' '));
-
-    res.json({ data: user });
-  }),
+    },
+  ),
 };
