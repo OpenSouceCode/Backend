@@ -1,5 +1,6 @@
 const create = require('../create');
 const User = require('../../models/User');
+const validators = require('../../validators/user');
 
 module.exports = {
   getProfile: create(async (req, res) => {
@@ -11,11 +12,27 @@ module.exports = {
   }),
 
   updateProfile: create(async (req, res) => {
-    const { profileImage } = req.body;
+    create.options = {
+      validation: {
+        validators: validators.checkName,
+        throwError: !req.body.name,
+      },
+    };
 
-    const user = await User.findOneAndUpdate(req.user.id, {
-      profileImage,
-    }).select(User.getProfileFields().join(' '));
+    if (create.options.validation.throwError) {
+      res.json('Name is required!');
+    }
+
+    const { name } = req.body;
+
+    const user = await User.findOneAndUpdate(
+      req.user.id,
+      {
+        name,
+      },
+      { new: true },
+    ).select(User.getProfileFields().join(' '));
+
     res.json({ data: user });
   }),
 };
