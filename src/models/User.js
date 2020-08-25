@@ -15,19 +15,15 @@ const UserSchema = new mongoose.Schema({
   socials: {
     website: {
       type: String,
-      trim: true,
     },
     github: {
       type: String,
-      trim: true,
     },
     linkedin: {
       type: String,
-      trim: true,
     },
     twitter: {
       type: String,
-      trim: true,
     },
   },
   oAuth: {

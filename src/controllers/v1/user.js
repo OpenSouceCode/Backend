@@ -13,18 +13,8 @@ module.exports = {
 
   updateProfile: create(
     async (req, res) => {
-      const {
-        name,
-        about,
-        skills,
-        website,
-        github,
-        linkedin,
-        twitter,
-      } = req.body;
-
       // eslint-disable-next-line object-curly-newline
-      const socials = { website, github, linkedin, twitter };
+      const { name, about, skills } = req.body;
 
       const user = await User.findOneAndUpdate(
         req.user.id,
@@ -32,7 +22,6 @@ module.exports = {
           name,
           about,
           skills,
-          socials,
         },
         { new: true },
       ).select(User.getProfileFields().join(' '));
@@ -42,6 +31,32 @@ module.exports = {
     {
       validation: {
         validators: validators.updateProfile,
+        throwError: true,
+      },
+    },
+  ),
+
+  updateSocials: create(
+    async (req, res) => {
+      // eslint-disable-next-line object-curly-newline
+      const { website, github, linkedin, twitter } = req.body;
+
+      // eslint-disable-next-line object-curly-newline
+      const socials = { website, github, linkedin, twitter };
+
+      const user = await User.findOneAndUpdate(
+        req.user.id,
+        {
+          socials,
+        },
+        { new: true },
+      ).select(User.getProfileFields().join(' '));
+
+      res.json({ data: user });
+    },
+    {
+      validation: {
+        validators: validators.updateSocials,
         throwError: true,
       },
     },
