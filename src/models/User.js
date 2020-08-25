@@ -8,6 +8,31 @@ const UserSchema = new mongoose.Schema({
   profileImage: {
     type: String,
   },
+  about: {
+    title: {
+      type: String,
+    },
+    bio: {
+      type: String,
+    },
+    skills: {
+      type: String,
+    },
+  },
+  socials: {
+    website: {
+      type: String,
+    },
+    github: {
+      type: String,
+    },
+    linkedin: {
+      type: String,
+    },
+    twitter: {
+      type: String,
+    },
+  },
   oAuth: {
     github: {
       id: {
