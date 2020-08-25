@@ -16,10 +16,12 @@ module.exports = {
   }),
 
   githubOAuthCallback: [
-    passport.authenticate('github', { failureRedirect: '/login' }),
+    passport.authenticate('github', {
+      failureRedirect: `${config.FRONTEND_LOGIN_URL}?status=${401}`,
+    }),
     create(async (req, res) => {
       const token = await jwt.sign(req.user.id);
-      res.redirect(`${config.FRONTEND_LOGIN_URL}?token=${token}`);
+      res.redirect(`${config.FRONTEND_LOGIN_URL}?status=${200}&token=${token}`);
     }),
   ],
 };
