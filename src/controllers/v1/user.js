@@ -13,12 +13,26 @@ module.exports = {
 
   updateProfile: create(
     async (req, res) => {
-      const { name } = req.body;
+      const {
+        name,
+        about,
+        skills,
+        website,
+        github,
+        linkedin,
+        twitter,
+      } = req.body;
+
+      // eslint-disable-next-line object-curly-newline
+      const socials = { website, github, linkedin, twitter };
 
       const user = await User.findOneAndUpdate(
         req.user.id,
         {
           name,
+          about,
+          skills,
+          socials,
         },
         { new: true },
       ).select(User.getProfileFields().join(' '));

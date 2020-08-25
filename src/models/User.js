@@ -9,28 +9,25 @@ const UserSchema = new mongoose.Schema({
     type: String,
   },
   about: {
-    title: {
-      type: String,
-    },
-    bio: {
-      type: String,
-    },
-    skills: {
-      type: String,
-    },
+    type: String,
   },
+  skills: [{ type: String, trim: true }],
   socials: {
     website: {
       type: String,
+      trim: true,
     },
     github: {
       type: String,
+      trim: true,
     },
     linkedin: {
       type: String,
+      trim: true,
     },
     twitter: {
       type: String,
+      trim: true,
     },
   },
   oAuth: {
@@ -64,7 +61,7 @@ const UserSchema = new mongoose.Schema({
 });
 
 UserSchema.statics.getProfileFields = function () {
-  return ['_id', 'name', 'profileImage'];
+  return ['_id', 'name', 'profileImage', 'about', 'skills', 'socials'];
 };
 
 const User = mongoose.model('User', UserSchema);
