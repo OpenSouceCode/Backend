@@ -37,29 +37,22 @@ module.exports = {
     },
   ),
 
-  updateSocials: create(
-    async (req, res) => {
-      // eslint-disable-next-line object-curly-newline
-      const { website, github, linkedin, twitter } = req.body;
+  updateSocials: create(async (req, res) => {
+    const socialURL = {};
+    // eslint-disable-next-line no-return-assign
+    Object.keys(req.body).forEach((key) => (socialURL[key] = req.body[key]));
 
-      // eslint-disable-next-line object-curly-newline
-      const socials = { website, github, linkedin, twitter };
+    const user = await User.findById(req.user.id).select(
+      User.getProfileFields().join(' '),
+    );
 
-      const user = await User.findOneAndUpdate(
-        req.user.id,
-        {
-          socials,
-        },
-        { new: true },
-      ).select(User.getProfileFields().join(' '));
+    Object.keys(socialURL).forEach(
+      // eslint-disable-next-line no-return-assign
+      (key) => (user.socials[key] = socialURL[key]),
+    );
 
-      res.json({ data: user });
-    },
-    {
-      validation: {
-        validators: validators.updateSocials,
-        throwError: true,
-      },
-    },
-  ),
+    await user.save();
+
+    res.json({ data: user });
+  }),
 };
