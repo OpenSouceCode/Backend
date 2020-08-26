@@ -14,13 +14,14 @@ module.exports = {
   updateProfile: create(
     async (req, res) => {
       // eslint-disable-next-line object-curly-newline
-      const { name, about, skills } = req.body;
+      const { name, about, skills, title } = req.body;
 
       const user = await User.findOneAndUpdate(
         req.user.id,
         {
           name,
           about,
+          title,
           skills,
         },
         { new: true },
