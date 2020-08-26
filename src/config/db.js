@@ -3,15 +3,17 @@ const config = require('./index');
 const logger = require('../utils/logger');
 
 const db = config.DB.URL;
+const connectionOptions = {
+  useNewUrlParser: true,
+  useCreateIndex: true,
+  useFindAndModify: false,
+  useUnifiedTopology: true,
+  poolSize: config.DB.POOL_SIZE,
+};
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(db, {
-      useNewUrlParser: true,
-      useCreateIndex: true,
-      useFindAndModify: false,
-      useUnifiedTopology: true,
-    });
+    await mongoose.connect(db, connectionOptions);
 
     logger.info('MongoDB connected!');
   } catch (err) {
