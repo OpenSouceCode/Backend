@@ -37,22 +37,23 @@ module.exports = {
     },
   ),
 
-  updateSocials: create(async (req, res) => {
-    const socialURL = {};
-    // eslint-disable-next-line no-return-assign
-    Object.keys(req.body).forEach((key) => (socialURL[key] = req.body[key]));
+  updateSocials: create(
+    async (req, res) => {
+      const socials = res.locals.inputBody;
 
-    const user = await User.findById(req.user.id).select(
-      User.getProfileFields().join(' '),
-    );
-
-    Object.keys(socialURL).forEach(
-      // eslint-disable-next-line no-return-assign
-      (key) => (user.socials[key] = socialURL[key]),
-    );
-
-    await user.save();
-
-    res.json({ data: user });
-  }),
+      const user = await User.findByIdAndUpdate(
+        req.user.id,
+        { socials },
+        { new: true },
+      ).select(User.getProfileFields().join(' '));
+      res.json({ data: user });
+    },
+    {
+      validation: {
+        validators: validators.updateSocials,
+        throwError: true,
+      },
+      inputs: ['website', 'github', 'linkedin', 'twitter'],
+    },
+  ),
 };
