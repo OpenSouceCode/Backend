@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Joi = require('joi');
 
 const UserSchema = new mongoose.Schema({
   name: {
@@ -53,7 +54,10 @@ const UserSchema = new mongoose.Schema({
         type: String,
       },
       email: {
-        type: String,
+        type: Joi.string().email({
+          minDomainSegments: 3,
+          tlds: { allow: ['com', 'net', 'in'] },
+        }),
       },
     },
   },

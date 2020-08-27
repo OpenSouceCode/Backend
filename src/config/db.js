@@ -11,6 +11,7 @@ const connectDB = async () => {
       useCreateIndex: true,
       useFindAndModify: false,
       useUnifiedTopology: true,
+      socketTimeoutMS: 45000,
     });
 
     logger.info('MongoDB connected!');
