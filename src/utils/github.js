@@ -40,21 +40,16 @@ module.exports = {
         reject(error);
       }
     }),
-
-    searchStarred: async (accessToken, {sort, direction, page, per_page }) =>
+  // eslint-disable-next-line camelcase
+  searchStarredRepos: async (accessToken, { page, per_page }) =>
     new Promise(async (resolve, reject) => {
       try {
         const queryStr = querystring.stringify({
-          sort,
-          direction,
           page,
           per_page,
         });
         const resp = await http.get(`/user/starred?${queryStr}`, {
-          headers: {
-            Authorization: `token ${accessToken}`,
-            Accept: 'application/vnd.github.v3+json',
-          },
+          headers: { Authorization: `token ${accessToken}` },
         });
         const { link } = resp.headers;
         let hasNextPage = false;
