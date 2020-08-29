@@ -40,11 +40,16 @@ module.exports = {
         reject(error);
       }
     }),
-  // eslint-disable-next-line camelcase
-  searchStarredRepos: async (accessToken, { page, per_page }) =>
+  searchStarredRepos: async (
+    accessToken, 
+    // eslint-disable-next-line camelcase
+    { sort, direction, page, per_page }
+  ) =>
     new Promise(async (resolve, reject) => {
       try {
         const queryStr = querystring.stringify({
+          sort,
+          direction,
           page,
           per_page,
         });
