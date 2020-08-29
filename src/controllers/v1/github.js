@@ -23,10 +23,10 @@ module.exports = {
   }),
 
   getStarredRepos: create(async (req, res) => {
-    const { 
+    const {
       sort = 'created ',
       direction = 'asc',
-      page = 1, 
+      page = 1,
       per_page = 20,
     } = req.query;
     const resp = await github.searchStarredRepos(req.accessToken, {
