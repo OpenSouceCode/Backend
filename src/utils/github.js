@@ -45,8 +45,7 @@ module.exports = {
     accessToken,
     // eslint-disable-next-line camelcase, object-curly-newline
     { milestone, sort, assignee, owner, repos, page, per_page },
-  ) => {
-    // eslint-disable-next-line no-new
+  ) =>
     new Promise(async (resolve, reject) => {
       try {
         const queryStr = querystring.stringify({
@@ -83,8 +82,7 @@ module.exports = {
       } catch (error) {
         reject(error);
       }
-    });
-  },
+    }),
 
   // eslint-disable-next-line camelcase, object-curly-newline
   searchPullRequests: async (accessToken, { owner, repos, page, per_page }) =>
