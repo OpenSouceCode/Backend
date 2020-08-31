@@ -88,7 +88,7 @@ module.exports = {
           headers: {
             Authorization: `token ${accessToken}`,
             'Content-Length': 0,
-          }
+          },
         });
         resolve({ message: resp.status });
       } catch (error) {
