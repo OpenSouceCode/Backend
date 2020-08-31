@@ -126,4 +126,35 @@ module.exports = {
         reject(error);
       }
     }),
+
+  // eslint-disable-next-line object-curly-newline
+  starRepo: async (accessToken, { owner, repo }) =>
+    new Promise(async (resolve, reject) => {
+      try {
+        const resp = await http.put(`/user/starred/${owner}/${repo}`, {
+          headers: {
+            Authorization: `token ${accessToken}`,
+            'Content-Length': 0,
+          },
+        });
+
+        resolve(resp);
+      } catch (error) {
+        reject(error);
+      }
+    }),
+
+  // eslint-disable-next-line object-curly-newline
+  unstarRepo: async (accessToken, { owner, repo }) =>
+    new Promise(async (resolve, reject) => {
+      try {
+        const resp = await http.delete(`/user/starred/${owner}/${repo}`, {
+          headers: { Authorization: `token ${accessToken}` },
+        });
+
+        resolve(resp);
+      } catch (error) {
+        reject(error);
+      }
+    }),
 };

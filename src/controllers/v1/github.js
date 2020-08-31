@@ -60,4 +60,26 @@ module.exports = {
 
     res.json(resp);
   }),
+
+  starRepo: create(async (req, res) => {
+    const { owner, repo } = req.params;
+
+    const resp = await github.starRepo(req.accessToken, {
+      owner,
+      repo,
+    });
+
+    res.json(resp);
+  }),
+
+  unstarRepo: create(async (req, res) => {
+    const { owner, repo } = req.params;
+
+    const resp = await github.unstarRepo(req.accessToken, {
+      owner,
+      repo,
+    });
+
+    res.json(resp);
+  }),
 };
