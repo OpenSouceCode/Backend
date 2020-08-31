@@ -77,6 +77,24 @@ module.exports = {
       }
     }),
 
+  unstarRepo: async (
+    accessToken,
+    // eslint-disable-next-line camelcase, object-curly-newline
+    { owner, repo },
+  ) =>
+    new Promise(async (resolve, reject) => {
+      try {
+        const resp = await http.delete(`/user/starred/${owner}/${repo}`, {
+          headers: {
+            Authorization: `token ${accessToken}`,
+            'Content-Length': 0,
+          }
+        });
+        resolve({ message: resp.status });
+      } catch (error) {
+        reject(error);
+      }
+    }),
   searchIssues: async (
     accessToken,
     // eslint-disable-next-line camelcase, object-curly-newline

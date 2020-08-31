@@ -39,6 +39,16 @@ module.exports = {
     res.json(resp);
   }),
 
+  unstarRepo: create(async (req, res) => {
+    const { owner, repo } = req.params;
+    const resp = await github.unstarRepo(req.accessToken, {
+      owner,
+      repo,
+    });
+
+    res.json(resp);
+  }),
+
   getIssues: create(async (req, res) => {
     const {
       milestone = '*',
