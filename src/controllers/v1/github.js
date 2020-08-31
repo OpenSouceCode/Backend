@@ -24,9 +24,10 @@ module.exports = {
 
   getIssues: create(async (req, res) => {
     const {
-      milestone = '*',
-      sort = 'stars',
-      assignee = '*',
+      milestone,
+      sort = 'created',
+      direction = 'desc',
+      assignee,
       page = 1,
       per_page = 20,
     } = req.query;
@@ -36,6 +37,7 @@ module.exports = {
       milestone,
       sort,
       assignee,
+      direction,
       owner,
       repos,
       page,
