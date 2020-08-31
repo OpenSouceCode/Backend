@@ -44,17 +44,24 @@ module.exports = {
   searchIssues: async (
     accessToken,
     // eslint-disable-next-line camelcase, object-curly-newline
-    { milestone, sort, assignee, owner, repos, page, per_page },
+    { milestone, sort, direction, assignee, owner, repos, page, per_page },
   ) =>
     new Promise(async (resolve, reject) => {
       try {
-        const queryStr = querystring.stringify({
-          milestone,
+        const obj = {
           sort,
-          assignee,
           page,
           per_page,
-        });
+          direction,
+        };
+        if (milestone) {
+          obj.milestone = milestone;
+        }
+
+        if (assignee) {
+          obj.assignee = assignee;
+        }
+        const queryStr = querystring.stringify(obj);
 
         const resp = await http.get(
           `/repos/${owner}/${repos}/issues?${queryStr}`,
