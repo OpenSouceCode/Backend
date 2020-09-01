@@ -42,6 +42,46 @@ module.exports = {
       }
     }),
 
+  searchStarredRepos: async (
+    accessToken,
+    // eslint-disable-next-line camelcase, object-curly-newline
+    { sort, direction, page, per_page },
+  ) =>
+    new Promise(async (resolve, reject) => {
+      try {
+        const octokit = new Octokit({
+          auth: `${accessToken}`,
+        });
+        const queryStr = querystring.stringify({
+          sort,
+          direction,
+          page,
+          per_page,
+        });
+
+        const resp = await octokit.request(`GET /user/starred?${queryStr}`);
+
+        const { link } = resp.headers;
+        let hasNextPage = false;
+
+        if (link) {
+          const linksArray = link.split(',');
+          // eslint-disable-next-line no-restricted-syntax
+          for (const elem of linksArray) {
+            const linkArray = elem.split(';');
+            if (linkArray.length > 1 && linkArray[1].includes('rel="next"')) {
+              hasNextPage = true;
+              break;
+            }
+          }
+        }
+
+        resolve({ data: resp.data, hasNextPage });
+      } catch (error) {
+        reject(error);
+      }
+    }),
+
   searchIssues: async (
     accessToken,
     // eslint-disable-next-line camelcase, object-curly-newline
