@@ -31,7 +31,7 @@ module.exports = {
       page = 1,
       per_page = 20,
     } = req.query;
-    const { owner, repos } = req.params;
+    const { owner, repo } = req.params;
 
     const resp = await github.searchIssues(req.accessToken, {
       milestone,
@@ -39,7 +39,7 @@ module.exports = {
       assignee,
       direction,
       owner,
-      repos,
+      repo,
       page,
       per_page,
     });
@@ -49,11 +49,11 @@ module.exports = {
 
   getPullRequests: create(async (req, res) => {
     const { page = 1, per_page = 20 } = req.query;
-    const { owner, repos } = req.params;
+    const { owner, repo } = req.params;
 
     const resp = await github.searchPullRequests(req.accessToken, {
       owner,
-      repos,
+      repo,
       page,
       per_page,
     });

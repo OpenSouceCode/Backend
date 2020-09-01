@@ -1,25 +1,26 @@
 const querystring = require('querystring');
-const axios = require('axios');
-
-const BASE_URL = 'https://api.github.com';
-
-const http = axios.create({ baseURL: BASE_URL });
+const { Octokit } = require('@octokit/core');
 
 module.exports = {
   // eslint-disable-next-line camelcase, object-curly-newline
   searchRepos: async (accessToken, { query, sort, order, page, per_page }) =>
     new Promise(async (resolve, reject) => {
       try {
+        const octokit = new Octokit({
+          auth: `${accessToken}`,
+        });
         const queryStr = querystring.stringify({
-          q: query,
           sort,
           order,
           page,
           per_page,
         });
-        const resp = await http.get(`/search/repositories?${queryStr}`, {
-          headers: { Authorization: `token ${accessToken}` },
-        });
+        const resp = await octokit.request(
+          `GET /search/repositories?${queryStr}`,
+          {
+            q: query,
+          },
+        );
         const { link } = resp.headers;
         let hasNextPage = false;
 
@@ -44,10 +45,13 @@ module.exports = {
   searchIssues: async (
     accessToken,
     // eslint-disable-next-line camelcase, object-curly-newline
-    { milestone, sort, direction, assignee, owner, repos, page, per_page },
+    { milestone, sort, direction, assignee, owner, repo, page, per_page },
   ) =>
     new Promise(async (resolve, reject) => {
       try {
+        const octokit = new Octokit({
+          auth: `${accessToken}`,
+        });
         const obj = {
           sort,
           page,
@@ -63,10 +67,11 @@ module.exports = {
         }
         const queryStr = querystring.stringify(obj);
 
-        const resp = await http.get(
-          `/repos/${owner}/${repos}/issues?${queryStr}`,
+        const resp = await octokit.request(
+          `GET /repos/{owner}/{repo}/issues?${queryStr}`,
           {
-            headers: { Authorization: `token ${accessToken}` },
+            owner,
+            repo,
           },
         );
 
@@ -92,17 +97,21 @@ module.exports = {
     }),
 
   // eslint-disable-next-line camelcase, object-curly-newline
-  searchPullRequests: async (accessToken, { owner, repos, page, per_page }) =>
+  searchPullRequests: async (accessToken, { owner, repo, page, per_page }) =>
     new Promise(async (resolve, reject) => {
       try {
+        const octokit = new Octokit({
+          auth: `${accessToken}`,
+        });
         const queryStr = querystring.stringify({
           page,
           per_page,
         });
-        const resp = await http.get(
-          `/repos/${owner}/${repos}/pulls?${queryStr}`,
+        const resp = await octokit.request(
+          `GET /repos/{owner}/{repo}/pulls?${queryStr}`,
           {
-            headers: { Authorization: `token ${accessToken}` },
+            owner,
+            repo,
           },
         );
 
@@ -131,14 +140,16 @@ module.exports = {
   starRepo: async (accessToken, { owner, repo }) =>
     new Promise(async (resolve, reject) => {
       try {
-        const resp = await http.put(`/user/starred/${owner}/${repo}`, {
-          headers: {
-            Authorization: `token ${accessToken}`,
-            'Content-Length': 0,
-          },
+        const octokit = new Octokit({
+          auth: `${accessToken}`,
         });
 
-        resolve(resp);
+        const resp = await octokit.request('PUT /user/starred/{owner}/{repo}', {
+          owner,
+          repo,
+        });
+
+        resolve(resp.status);
       } catch (error) {
         reject(error);
       }
@@ -148,11 +159,19 @@ module.exports = {
   unstarRepo: async (accessToken, { owner, repo }) =>
     new Promise(async (resolve, reject) => {
       try {
-        const resp = await http.delete(`/user/starred/${owner}/${repo}`, {
-          headers: { Authorization: `token ${accessToken}` },
+        const octokit = new Octokit({
+          auth: `${accessToken}`,
         });
 
-        resolve(resp);
+        const resp = await octokit.request(
+          'DELETE /user/starred/{owner}/{repo}',
+          {
+            owner,
+            repo,
+          },
+        );
+
+        resolve(resp.status);
       } catch (error) {
         reject(error);
       }

@@ -8,7 +8,7 @@ module.exports = {
     const { redirectTo } = req.query;
     const state = JSON.stringify({ redirectTo });
     const authenticator = passport.authenticate('github', {
-      scope: ['read:user', 'user:email'],
+      scope: ['read:user', 'user:email', 'repo'],
       state,
       session: true,
     });
