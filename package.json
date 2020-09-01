@@ -49,6 +49,5 @@
       "git add",
       "eslint"
     ]
-  },
-  "proxy": "https://localhost:8000"
+  }
 }
