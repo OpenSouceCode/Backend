@@ -16,7 +16,7 @@ module.exports = {
       // eslint-disable-next-line object-curly-newline
       const { name, about, skills, title } = req.body;
 
-      const user = await User.findOneAndUpdate(
+      const user = await User.findByIdAndUpdate(
         req.user.id,
         {
           name,
