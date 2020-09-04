@@ -4,6 +4,7 @@ const cors = require('cors');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
+const helmet = require('helmet');
 const passport = require('passport');
 const logger = require('./src/utils/logger');
 const connectDB = require('./src/config/db');
@@ -17,6 +18,7 @@ const app = express();
 
 app.use(morgan('dev'));
 app.use(express.json());
+app.use(helmet());
 app.use(cors());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());

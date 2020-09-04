@@ -19,15 +19,16 @@
     "express": "~4.16.1",
     "express-validator": "^6.6.1",
     "firebase-admin": "^8.12.1",
+    "helmet": "^4.1.0",
     "http-errors": "~1.6.3",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.28",
     "morgan": "~1.9.1",
+    "node-cache": "^5.1.2",
     "passport": "^0.4.1",
     "passport-github": "^1.1.0",
     "prettier": "^2.0.5",
-    "winston": "^3.3.2",
-    "node-cache": "^5.1.2"
+    "winston": "^3.3.2"
   },
   "devDependencies": {
     "eslint": "^7.0.0",

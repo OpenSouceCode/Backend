@@ -1,6 +1,7 @@
 const create = require('../create');
 const github = require('../../utils/github');
-const { mCache } = require('../../utils/cache');
+
+const CACHE_TTL = 5 * 60;
 
 module.exports = {
   getRepos: create(
@@ -22,11 +23,12 @@ module.exports = {
       });
 
       res.json(resp);
-      mCache.set(res.locals.cacheKey, resp, 5 * 60);
+      res.locals.setCache(resp);
     },
     {
       cache: {
         key: 'repo-list',
+        ttl: CACHE_TTL,
         dependsOnUser: false,
       },
     },
@@ -73,11 +75,12 @@ module.exports = {
       });
 
       res.json(resp);
-      mCache.set(res.locals.cacheKey, resp, 5 * 60);
+      res.locals.setCache(resp);
     },
     {
       cache: {
         key: 'repo-issues',
+        ttl: CACHE_TTL,
         dependsOnUser: false,
       },
     },
@@ -96,11 +99,12 @@ module.exports = {
       });
 
       res.json(resp);
-      mCache.set(res.locals.cacheKey, resp, 5 * 60);
+      res.locals.setCache(resp);
     },
     {
       cache: {
-        key: 'repo-issues',
+        key: 'repo-pulls',
+        ttl: CACHE_TTL,
         dependsOnUser: false,
       },
     },

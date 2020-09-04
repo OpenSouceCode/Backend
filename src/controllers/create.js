@@ -93,7 +93,7 @@ const createValidationMiddleware = ({ errorMsg, throwError }) => async (
   next();
 };
 
-const createCacheMiddleware = (key, dependsOnUser) => async (
+const createCacheMiddleware = (key, ttl, dependsOnUser) => async (
   req,
   res,
   next,
@@ -107,6 +107,12 @@ const createCacheMiddleware = (key, dependsOnUser) => async (
       path: req.originalUrl,
     });
     res.locals.cacheKey = cacheKey;
+    res.header('Cache-Control', `max-age=${ttl}`);
+
+    res.locals.setCache = (body) => {
+      mCache.set(cacheKey, body, ttl);
+    };
+
     const cacheContent = mCache.get(cacheKey);
     if (!cacheContent || hardRefresh) {
       return next();
@@ -137,8 +143,16 @@ const route = (
   const middlewareArray = [];
 
   if (options.cache) {
+    if (!options.cache.ttl) {
+      throw new Error('`cache.ttl` is required.');
+    }
+
     middlewareArray.push(
-      createCacheMiddleware(options.cache.key, options.cache.dependsOnUser),
+      createCacheMiddleware(
+        options.cache.key,
+        options.cache.ttl,
+        options.cache.dependsOnUser,
+      ),
     );
   }
 
