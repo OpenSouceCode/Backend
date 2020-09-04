@@ -11,6 +11,19 @@ module.exports = {
     res.json({ data: user });
   }),
 
+  getProfiles: create(async (req, res) => {
+    // console.log(req.user);
+    // const { role } = req.user;
+    // console.log(role);
+    if (req.user.role !== 'admin') {
+      res.status(403).send('You are not authorized to access this route');
+    }
+
+    const users = await User.find({}).select(User.getProfileFields().join(' '));
+
+    res.json({ data: users });
+  }),
+
   updateProfile: create(
     async (req, res) => {
       // eslint-disable-next-line object-curly-newline

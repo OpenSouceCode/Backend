@@ -22,12 +22,12 @@ const auth = async (req, _res, next) => {
     }
 
     const user = await User.findById(payload.sub).select(
-      '_id oAuth.github.accessToken',
+      '_id role oAuth.github.accessToken',
     );
     if (!user) {
       return next(createError(401, 'Unauthorized user.'));
     }
-
+    console.log(user.role);
     req.user = user;
     req.accessToken = user.oAuth.github.accessToken;
     return next();
