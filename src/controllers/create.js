@@ -8,6 +8,8 @@
 const { validationResult } = require('express-validator');
 const createError = require('http-errors');
 
+const { mCache, genCacheKey } = require('../utils/cache');
+
 const VALIDATION_ERROR = 'Validation error.';
 
 /**
@@ -91,6 +93,31 @@ const createValidationMiddleware = ({ errorMsg, throwError }) => async (
   next();
 };
 
+const createCacheMiddleware = (key, dependsOnUser) => async (
+  req,
+  res,
+  next,
+) => {
+  try {
+    const { hardRefresh } = req.query;
+
+    const cacheKey = genCacheKey({
+      userId: dependsOnUser ? req.user.id : undefined,
+      key,
+      path: req.originalUrl,
+    });
+    res.locals.cacheKey = cacheKey;
+    const cacheContent = mCache.get(cacheKey);
+    if (!cacheContent || hardRefresh) {
+      return next();
+    }
+    return res.json(cacheContent);
+  } catch (error) {
+    console.error(error);
+    return next();
+  }
+};
+
 /**
  * This will create a series of middleware functions to execute common tasks
  * based on the options provided.
@@ -104,9 +131,16 @@ const route = (
       throwError: false,
     },
     inputs: false,
+    cache: undefined,
   },
 ) => {
   const middlewareArray = [];
+
+  if (options.cache) {
+    middlewareArray.push(
+      createCacheMiddleware(options.cache.key, options.cache.dependsOnUser),
+    );
+  }
 
   const customController = async (req, res, next) => {
     try {
