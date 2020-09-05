@@ -12,9 +12,6 @@ module.exports = {
   }),
 
   getProfiles: create(async (req, res) => {
-    // console.log(req.user);
-    // const { role } = req.user;
-    // console.log(role);
     if (req.user.role !== 'admin') {
       res.status(403).send('You are not authorized to access this route');
     }
