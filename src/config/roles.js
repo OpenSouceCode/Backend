@@ -1,3 +1,6 @@
-const roles = ['admin', 'user'];
+const ROLES = {
+  USER: 'user',
+  ADMIN: 'admin',
+};
 
-module.exports = roles;
+module.exports = ROLES;
