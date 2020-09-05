@@ -2,7 +2,7 @@ const createError = require('http-errors');
 const jwt = require('../utils/jwt');
 const User = require('../models/User');
 
-const auth = async (req, _res, next) => {
+const auth = (role) => async (req, _res, next) => {
   try {
     const header = req.get('Authorization');
     if (!header) {
@@ -22,13 +22,14 @@ const auth = async (req, _res, next) => {
     }
 
     const user = await User.findById(payload.sub).select(
-      '_id role oAuth.github.accessToken',
+      '_id oAuth.github.accessToken',
     );
     if (!user) {
       return next(createError(401, 'Unauthorized user.'));
     }
 
     req.user = user;
+    req.user.role = role;
     req.accessToken = user.oAuth.github.accessToken;
     return next();
   } catch (error) {
