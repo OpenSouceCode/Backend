@@ -31,7 +31,7 @@ passport.use(
           );
         } else {
           currentUser = await User.create({
-            name: userData.name,
+            name: userData.name || userData.login,
             email: userData.email,
             profileImage: userData.avatar_url,
             oAuth: {
