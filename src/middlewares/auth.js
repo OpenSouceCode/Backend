@@ -22,15 +22,19 @@ const auth = (role) => async (req, _res, next) => {
     }
 
     const user = await User.findById(payload.sub).select(
-      '_id oAuth.github.accessToken',
+      '_id role oAuth.github.accessToken',
     );
     if (!user) {
       return next(createError(401, 'Unauthorized user.'));
     }
 
     req.user = user;
-    req.user.role = role;
     req.accessToken = user.oAuth.github.accessToken;
+
+    if (role && req.user.role !== role) {
+      return next(createError(403, 'Forbidden user.'));
+    }
+
     return next();
   } catch (error) {
     return next(createError(401, 'Unauthorized user.'));

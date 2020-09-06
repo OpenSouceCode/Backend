@@ -7,8 +7,8 @@ const controller = require('../../controllers/v1/user');
 const ROLES = require('../../config/roles');
 
 router.get('/', authenticator(ROLES.ADMIN), controller.getProfiles);
-router.get('/profile', authenticator(ROLES.USER), controller.getProfile);
-router.patch('/profile', authenticator(ROLES.USER), controller.updateProfile);
-router.patch('/socials', authenticator(ROLES.USER), controller.updateSocials);
+router.get('/profile', authenticator(), controller.getProfile);
+router.patch('/profile', authenticator(), controller.updateProfile);
+router.patch('/socials', authenticator(), controller.updateSocials);
 
 module.exports = router;

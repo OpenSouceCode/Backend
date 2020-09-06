@@ -1,7 +1,6 @@
 const create = require('../create');
 const User = require('../../models/User');
 const validators = require('../../validators/user');
-const ROLES = require('../../config/roles');
 
 module.exports = {
   getProfile: create(async (req, res) => {
@@ -13,10 +12,6 @@ module.exports = {
   }),
 
   getProfiles: create(async (req, res) => {
-    if (req.user.role !== ROLES.ADMIN) {
-      res.status(403).send('You are not authorized to access this route');
-    }
-
     const users = await User.find({}).select(User.getProfileFields().join(' '));
 
     res.json({ data: users });
