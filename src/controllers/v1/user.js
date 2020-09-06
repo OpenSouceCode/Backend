@@ -12,9 +12,25 @@ module.exports = {
   }),
 
   getProfiles: create(async (req, res) => {
-    const users = await User.find({}).select(User.getProfileFields().join(' '));
+    const { page = 1, per_page = 10 } = req.query;
 
-    res.json({ data: users });
+    const users = await User.find({})
+      .select(User.getProfileFields().join(' '))
+      // eslint-disable-next-line camelcase
+      .limit(per_page * 1)
+      // eslint-disable-next-line camelcase
+      .skip((page - 1) * per_page);
+
+    const count = await User.countDocuments();
+
+    res.json({
+      data: {
+        // eslint-disable-next-line camelcase
+        totalPages: Math.ceil(count / per_page),
+        currentPage: page,
+        users,
+      },
+    });
   }),
 
   updateProfile: create(
