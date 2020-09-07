@@ -11,6 +11,16 @@ module.exports = {
     res.json({ data: user });
   }),
 
+  getProfileById: create(async (req, res) => {
+    const { id } = req.params;
+
+    const user = await User.findById(id).select(
+      User.getProfileFields().join(' '),
+    );
+
+    res.json({ data: user });
+  }),
+
   getProfiles: create(async (req, res) => {
     const { page = 1, per_page = 10 } = req.query;
 
