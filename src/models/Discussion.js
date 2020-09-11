@@ -4,22 +4,27 @@ const User = require('./User');
 const DiscussionSchema = new mongoose.Schema({
   question: {
     type: String,
+    required: true,
   },
   user: {
     type: User,
+    required: true,
   },
   date: {
     type: Date,
+    default: Date.now,
   },
   name: {
     type: String,
+    required: true,
   },
   repository: {
     type: String,
+    required: true,
   },
 });
 
-DiscussionSchema.statics.getProfileFields = function () {
+DiscussionSchema.statics.getDiscussionFields = function () {
   return ['_id', 'question', 'user', 'date', 'name', 'repository'];
 };
 
