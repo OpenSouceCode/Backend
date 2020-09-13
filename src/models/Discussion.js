@@ -1,13 +1,13 @@
 const mongoose = require('mongoose');
-const User = require('./User');
 
 const DiscussionSchema = new mongoose.Schema({
   question: {
     type: String,
     required: true,
   },
-  user: {
-    type: User,
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
     required: true,
   },
   date: {
@@ -25,7 +25,7 @@ const DiscussionSchema = new mongoose.Schema({
 });
 
 DiscussionSchema.statics.getDiscussionFields = function () {
-  return ['_id', 'question', 'user', 'date', 'name', 'repository'];
+  return ['_id', 'question', 'userId', 'date', 'name', 'repository'];
 };
 
 const Discussion = mongoose.model('Discussion', DiscussionSchema);
