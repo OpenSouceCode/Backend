@@ -1,13 +1,13 @@
 const mongoose = require('mongoose');
-const User = require('./User');
 
 const DiscussionCommentSchema = new mongoose.Schema({
   comment: {
     type: String,
     required: true,
   },
-  user: {
-    type: User,
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
     required: true,
   },
   date: {
