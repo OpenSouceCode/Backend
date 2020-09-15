@@ -14,10 +14,6 @@ const DiscussionSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  name: {
-    type: String,
-    required: true,
-  },
   repository: {
     type: String,
     required: true,
