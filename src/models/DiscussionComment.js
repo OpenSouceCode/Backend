@@ -19,14 +19,10 @@ const DiscussionCommentSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  name: {
-    type: String,
-    required: true,
-  },
 });
 
 DiscussionCommentSchema.statics.getDiscussionCommentFields = function () {
-  return ['_id', 'comment', 'userId', 'date', 'name'];
+  return ['_id', 'comment', 'userId', 'date'];
 };
 
 const DiscussionComment = mongoose.model(
