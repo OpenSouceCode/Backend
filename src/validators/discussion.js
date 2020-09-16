@@ -1,4 +1,3 @@
-const mongoose = require('mongoose');
 const { body } = require('express-validator');
 
 module.exports = {
@@ -10,10 +9,9 @@ module.exports = {
   ],
   postComment: [
     body('comment').isString().notEmpty().withMessage('Comment is required'),
-    body('discussionId').custom((discussionId) => {
-      if (!mongoose.Types.ObjectId.isValid(discussionId)) {
-        throw new Error('discussionId should be a mongoose ObjectId');
-      }
-    }),
+    body('discussionId')
+      .isMongoId()
+      .notEmpty()
+      .withMessage('discussionId is required'),
   ],
 };
