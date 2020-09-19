@@ -7,8 +7,9 @@ const SkillTestSchema = new mongoose.Schema(
       required: true,
     },
     isPublished: {
-      type: String,
+      type: Boolean,
       required: true,
+      default: false,
     },
     image: {
       type: String,
