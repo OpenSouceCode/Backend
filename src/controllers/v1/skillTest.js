@@ -1,5 +1,4 @@
 const create = require('../create');
-// eslint-disable-next-line import/no-unresolved
 const SkillTest = require('../../models/SkillTest');
 const validators = require('../../validators/skillTest');
 
