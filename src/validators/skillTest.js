@@ -10,11 +10,11 @@ module.exports = {
       .withMessage('Description is required'),
   ],
   updateSkillTest: [
-    body('name').isString().optional().withMessage('Name is required'),
-    body('image').isString().optional().withMessage('Image is required'),
+    body('name').isString().optional().withMessage('Name should be a String'),
+    body('image').isString().optional().withMessage('Image should be a String'),
     body('description')
       .isString()
       .optional()
-      .withMessage('Description is required'),
+      .withMessage('Description should be a String'),
   ],
 };
