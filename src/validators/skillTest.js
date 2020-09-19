@@ -9,4 +9,12 @@ module.exports = {
       .notEmpty()
       .withMessage('Description is required'),
   ],
+  updateSkillTest: [
+    body('name').isString().optional().withMessage('Name is required'),
+    body('image').isString().optional().withMessage('Image is required'),
+    body('description')
+      .isString()
+      .optional()
+      .withMessage('Description is required'),
+  ],
 };
