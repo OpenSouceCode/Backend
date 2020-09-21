@@ -2,8 +2,36 @@ const create = require('../create');
 const SkillTest = require('../../models/SkillTest');
 const SkillTestQuestion = require('../../models/SkillTestQuestion');
 const validators = require('../../validators/skillTest');
+const ROLES = require('../../config/roles');
 
 module.exports = {
+  getSkillTests: create(async (req, res) => {
+    const { page = 1, per_page = 10, isPublished = false } = req.query;
+
+    let skillTests;
+
+    if (isPublished && req.user.role === ROLES.ADMIN) {
+      skillTests = await SkillTest.find({});
+    }
+
+    skillTests = await SkillTest.find({ isPublished: false })
+      // eslint-disable-next-line camelcase
+      .limit(per_page * 1)
+      // eslint-disable-next-line camelcase
+      .skip((page - 1) * per_page);
+
+    const count = await SkillTest.countDocuments();
+
+    res.json({
+      data: {
+        // eslint-disable-next-line camelcase
+        totalPages: Math.ceil(count / per_page),
+        currentPage: page,
+        skillTests,
+      },
+    });
+  }),
+
   postSkillTest: create(
     async (req, res) => {
       const { name, image, description } = req.body;
@@ -115,6 +143,20 @@ module.exports = {
     await SkillTestQuestion.findByIdAndRemove(questionId);
 
     res.status(200).send('Skill Test Question removed successfully');
+  }),
+
+  publishSkillTest: create(async (req, res) => {
+    const { testId } = req.params;
+
+    await SkillTest.findByIdAndUpdate(
+      testId,
+      {
+        isPublished: true,
+      },
+      { new: true },
+    );
+
+    res.status(200).send('Skill Test published successfully');
   }),
 
   unpublishSkillTest: create(async (req, res) => {

@@ -6,6 +6,7 @@ const authenticator = require('../../middlewares/auth');
 const controller = require('../../controllers/v1/skillTest');
 const ROLES = require('../../config/roles');
 
+router.get('/', authenticator(), controller.getSkillTests);
 router.post('/', authenticator(ROLES.ADMIN), controller.postSkillTest);
 router.post(
   '/publish/:testId',
