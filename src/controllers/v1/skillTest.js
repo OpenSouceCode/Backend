@@ -109,6 +109,20 @@ module.exports = {
     },
   ),
 
+  publishSkillTest: create(async (req, res) => {
+    const { testId } = req.params;
+
+    await SkillTest.findByIdAndUpdate(
+      testId,
+      {
+        isPublished: true,
+      },
+      { new: true },
+    );
+
+    res.status(200).send('Skill Test published successfully');
+  }),
+
   deleteSkillTest: create(async (req, res) => {
     const { id } = req.params;
 
