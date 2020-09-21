@@ -24,7 +24,6 @@ module.exports = {
       .skip((page - 1) * per_page);
 
     const count = await SkillTestQuestion.find({ testId }).countDocuments();
-    console.log(count);
 
     return res.json({
       data: {
