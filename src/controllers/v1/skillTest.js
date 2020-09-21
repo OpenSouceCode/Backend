@@ -108,4 +108,12 @@ module.exports = {
       inputs: ['question', 'options', 'correctIndex'],
     },
   ),
+
+  deleteSkillTest: create(async (req, res) => {
+    const { id } = req.params;
+
+    await SkillTest.findByIdAndRemove(id);
+
+    res.status(200).send('Skill Test removed successfully');
+  }),
 };
