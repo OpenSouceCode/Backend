@@ -18,5 +18,10 @@ router.patch(
   controller.updateSkillTestQuestion,
 );
 router.patch('/:id', authenticator(ROLES.ADMIN), controller.updateSkillTest);
+router.delete(
+  '/question/:questionId',
+  authenticator(ROLES.ADMIN),
+  controller.deleteSkillTestQuestion,
+);
 
 module.exports = router;
