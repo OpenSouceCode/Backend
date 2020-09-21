@@ -11,14 +11,18 @@ module.exports = {
     let skillTests;
 
     if (isPublished && req.user.role === ROLES.ADMIN) {
-      skillTests = await SkillTest.find({});
+      skillTests = await SkillTest.find({})
+        // eslint-disable-next-line camelcase
+        .limit(per_page * 1)
+        // eslint-disable-next-line camelcase
+        .skip((page - 1) * per_page);
+    } else {
+      skillTests = await SkillTest.find({ isPublished: false })
+        // eslint-disable-next-line camelcase
+        .limit(per_page * 1)
+        // eslint-disable-next-line camelcase
+        .skip((page - 1) * per_page);
     }
-
-    skillTests = await SkillTest.find({ isPublished: false })
-      // eslint-disable-next-line camelcase
-      .limit(per_page * 1)
-      // eslint-disable-next-line camelcase
-      .skip((page - 1) * per_page);
 
     const count = await SkillTest.countDocuments();
 
