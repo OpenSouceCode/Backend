@@ -4,6 +4,28 @@ const SkillTestQuestion = require('../../models/SkillTestQuestion');
 const validators = require('../../validators/skillTest');
 
 module.exports = {
+  getSkillTestQuestions: create(async (req, res) => {
+    const { testId } = req.params;
+    const { page = 1, per_page = 10 } = req.query;
+
+    const skillTestQuestions = await SkillTestQuestion.find({ testId })
+      // eslint-disable-next-line camelcase
+      .limit(per_page * 1)
+      // eslint-disable-next-line camelcase
+      .skip((page - 1) * per_page);
+
+    const count = await SkillTestQuestion.find({ testId }).count({});
+
+    res.json({
+      data: {
+        // eslint-disable-next-line camelcase
+        totalPages: Math.ceil(count / per_page),
+        currentPage: page,
+        skillTestQuestions,
+      },
+    });
+  }),
+
   postSkillTest: create(
     async (req, res) => {
       const { name, image, description } = req.body;
@@ -115,6 +137,20 @@ module.exports = {
     await SkillTestQuestion.findByIdAndRemove(questionId);
 
     res.status(200).send('Skill Test Question removed successfully');
+  }),
+
+  publishSkillTest: create(async (req, res) => {
+    const { testId } = req.params;
+
+    await SkillTest.findByIdAndUpdate(
+      testId,
+      {
+        isPublished: true,
+      },
+      { new: true },
+    );
+
+    res.status(200).send('Skill Test published successfully');
   }),
 
   unpublishSkillTest: create(async (req, res) => {
