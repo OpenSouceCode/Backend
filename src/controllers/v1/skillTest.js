@@ -2,11 +2,20 @@ const create = require('../create');
 const SkillTest = require('../../models/SkillTest');
 const SkillTestQuestion = require('../../models/SkillTestQuestion');
 const validators = require('../../validators/skillTest');
+const ROLES = require('../../config/roles');
 
 module.exports = {
   getSkillTestQuestions: create(async (req, res) => {
     const { testId } = req.params;
     const { page = 1, per_page = 10 } = req.query;
+
+    const skillTest = await SkillTest.findById(testId);
+
+    if (!skillTest.isPublished && req.user.role !== ROLES.ADMIN) {
+      return res
+        .status(403)
+        .send('The user is forbidden to access the skill test');
+    }
 
     const skillTestQuestions = await SkillTestQuestion.find({ testId })
       // eslint-disable-next-line camelcase
@@ -14,9 +23,10 @@ module.exports = {
       // eslint-disable-next-line camelcase
       .skip((page - 1) * per_page);
 
-    const count = await SkillTestQuestion.find({ testId }).count({});
+    const count = await SkillTestQuestion.find({ testId }).countDocuments();
+    console.log(count);
 
-    res.json({
+    return res.json({
       data: {
         // eslint-disable-next-line camelcase
         totalPages: Math.ceil(count / per_page),
