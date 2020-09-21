@@ -126,9 +126,31 @@ module.exports = {
   deleteSkillTest: create(async (req, res) => {
     const { id } = req.params;
 
-    await SkillTestQuestion.findOne({ testId: id }).remove();
+    await SkillTestQuestion.find({ testId: id }).remove();
     await SkillTest.findByIdAndRemove(id);
 
     res.status(200).send('Skill Test removed successfully');
+  }),
+
+  deleteSkillTestQuestion: create(async (req, res) => {
+    const { questionId } = req.params;
+
+    await SkillTestQuestion.findByIdAndRemove(questionId);
+
+    res.status(200).send('Skill Test Question removed successfully');
+  }),
+
+  unpublishSkillTest: create(async (req, res) => {
+    const { testId } = req.params;
+
+    await SkillTest.findByIdAndUpdate(
+      testId,
+      {
+        isPublished: false,
+      },
+      { new: true },
+    );
+
+    res.status(200).send('Skill Test unpublished successfully');
   }),
 };
