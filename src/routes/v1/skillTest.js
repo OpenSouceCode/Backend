@@ -23,16 +23,16 @@ router.patch(
   controller.updateSkillTestQuestion,
 );
 router.patch('/:id', authenticator(ROLES.ADMIN), controller.updateSkillTest);
-router.delete(
-  '/question/:questionId',
-  authenticator(ROLES.ADMIN),
-  controller.deleteSkillTestQuestion,
-);
-router.delete(
-  '/publish/:testId',
-  authenticator(ROLES.ADMIN),
-  controller.unpublishSkillTest,
-);
+// router.delete(
+//   '/question/:questionId',
+//   authenticator(ROLES.ADMIN),
+//   controller.deleteSkillTestQuestion,
+// );
+// router.delete(
+//   '/publish/:testId',
+//   authenticator(ROLES.ADMIN),
+//   controller.unpublishSkillTest,
+// );
 router.delete('/:id', authenticator(ROLES.ADMIN), controller.deleteSkillTest);
 
 module.exports = router;

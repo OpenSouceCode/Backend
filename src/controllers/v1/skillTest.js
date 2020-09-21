@@ -126,6 +126,7 @@ module.exports = {
   deleteSkillTest: create(async (req, res) => {
     const { id } = req.params;
 
+    await SkillTestQuestion.findOne({ testId: id }).remove();
     await SkillTest.findByIdAndRemove(id);
 
     res.status(200).send('Skill Test removed successfully');
