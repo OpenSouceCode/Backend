@@ -6,23 +6,18 @@ const ROLES = require('../../config/roles');
 
 module.exports = {
   getSkillTests: create(async (req, res) => {
-    const { page = 1, per_page = 10, isPublished = false } = req.query;
+    const { page = 1, per_page = 10, isPublished } = req.query;
 
-    let skillTests;
+    const filterObj =
+      isPublished && isPublished === 'true' && req.user.role === ROLES.ADMIN
+        ? {}
+        : { isPublished: false };
 
-    if (isPublished && req.user.role === ROLES.ADMIN) {
-      skillTests = await SkillTest.find({})
-        // eslint-disable-next-line camelcase
-        .limit(per_page * 1)
-        // eslint-disable-next-line camelcase
-        .skip((page - 1) * per_page);
-    } else {
-      skillTests = await SkillTest.find({ isPublished: false })
-        // eslint-disable-next-line camelcase
-        .limit(per_page * 1)
-        // eslint-disable-next-line camelcase
-        .skip((page - 1) * per_page);
-    }
+    const skillTests = await SkillTest.find(filterObj)
+      // eslint-disable-next-line camelcase
+      .limit(per_page * 1)
+      // eslint-disable-next-line camelcase
+      .skip((page - 1) * per_page);
 
     const count = await SkillTest.countDocuments();
 
