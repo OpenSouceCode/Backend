@@ -28,10 +28,10 @@ module.exports = {
     });
   }),
 
-  getDiscussionById: create(async (req, res) => {
-    const { id } = req.params;
+  getDiscussionByRepoId: create(async (req, res) => {
+    const { repoId } = req.params;
 
-    const discussion = await Discussion.findById(id)
+    const discussion = await Discussion.find({ repository: repoId })
       .populate('userId', User.getUserIdFields().join(' '))
       .select(Discussion.getDiscussionFields().join(' '));
 
