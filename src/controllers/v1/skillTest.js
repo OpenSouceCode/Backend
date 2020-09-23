@@ -10,7 +10,7 @@ module.exports = {
 
     const filterObj =
       isPublished && isPublished === 'true' && req.user.role === ROLES.ADMIN
-        ? {}
+        ? { isPublished: true }
         : { isPublished: false };
 
     const skillTests = await SkillTest.find(filterObj)
@@ -27,6 +27,36 @@ module.exports = {
         totalPages: Math.ceil(count / per_page),
         currentPage: page,
         skillTests,
+      },
+    });
+  }),
+
+  getSkillTestQuestions: create(async (req, res) => {
+    const { testId } = req.params;
+    const { page = 1, per_page = 10 } = req.query;
+
+    const skillTest = await SkillTest.findById(testId);
+
+    if (!skillTest.isPublished && req.user.role !== ROLES.ADMIN) {
+      return res
+        .status(403)
+        .send('The user is forbidden to access the skill test');
+    }
+
+    const skillTestQuestions = await SkillTestQuestion.find({ testId })
+      // eslint-disable-next-line camelcase
+      .limit(per_page * 1)
+      // eslint-disable-next-line camelcase
+      .skip((page - 1) * per_page);
+
+    const count = await SkillTestQuestion.find({ testId }).countDocuments();
+
+    return res.json({
+      data: {
+        // eslint-disable-next-line camelcase
+        totalPages: Math.ceil(count / per_page),
+        currentPage: page,
+        skillTestQuestions,
       },
     });
   }),
@@ -135,6 +165,15 @@ module.exports = {
       inputs: ['question', 'options', 'correctIndex'],
     },
   ),
+
+  deleteSkillTest: create(async (req, res) => {
+    const { id } = req.params;
+
+    await SkillTestQuestion.deleteMany({ testId: id });
+    await SkillTest.deleteOne({ _id: id });
+
+    res.status(200).send('Skill Test removed successfully');
+  }),
 
   deleteSkillTestQuestion: create(async (req, res) => {
     const { questionId } = req.params;

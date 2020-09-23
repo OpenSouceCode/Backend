@@ -7,6 +7,7 @@ const controller = require('../../controllers/v1/skillTest');
 const ROLES = require('../../config/roles');
 
 router.get('/', authenticator(), controller.getSkillTests);
+router.get('/:testId', authenticator(), controller.getSkillTestQuestions);
 router.post('/', authenticator(ROLES.ADMIN), controller.postSkillTest);
 router.post(
   '/publish/:testId',
@@ -34,5 +35,6 @@ router.delete(
   authenticator(ROLES.ADMIN),
   controller.unpublishSkillTest,
 );
+router.delete('/:id', authenticator(ROLES.ADMIN), controller.deleteSkillTest);
 
 module.exports = router;
