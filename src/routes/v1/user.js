@@ -15,5 +15,6 @@ router.get(
 router.get('/profile', authenticator(), controller.getProfile);
 router.patch('/profile', authenticator(), controller.updateProfile);
 router.patch('/socials', authenticator(), controller.updateSocials);
+router.patch('/avatar', authenticator(), controller.updateAvatar);
 
 module.exports = router;

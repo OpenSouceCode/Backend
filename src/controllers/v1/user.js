@@ -88,4 +88,27 @@ module.exports = {
       inputs: ['website', 'github', 'linkedin', 'twitter'],
     },
   ),
+
+  updateAvatar: create(
+    async (req, res) => {
+      // eslint-disable-next-line object-curly-newline
+      const { profileImage } = req.body;
+
+      const user = await User.findByIdAndUpdate(
+        req.user.id,
+        {
+          profileImage,
+        },
+        { new: true },
+      ).select(User.getProfileFields().join(' '));
+
+      res.json({ data: user });
+    },
+    {
+      validation: {
+        validators: validators.updateAvatar,
+        throwError: true,
+      },
+    },
+  ),
 };
