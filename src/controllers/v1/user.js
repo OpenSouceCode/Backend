@@ -89,26 +89,9 @@ module.exports = {
     },
   ),
 
-  updateAvatar: create(
-    async (req, res) => {
-      // eslint-disable-next-line object-curly-newline
-      const { profileImage } = req.body;
+  updateAvatar: create(async (req, res) => {
+    if (!req.file) return res.status(400).send('No file received!');
 
-      const user = await User.findByIdAndUpdate(
-        req.user.id,
-        {
-          profileImage,
-        },
-        { new: true },
-      ).select(User.getProfileFields().join(' '));
-
-      res.json({ data: user });
-    },
-    {
-      validation: {
-        validators: validators.updateAvatar,
-        throwError: true,
-      },
-    },
-  ),
+    return res.status(200).send('File uploaded!');
+  }),
 };

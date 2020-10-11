@@ -1,6 +1,18 @@
 const express = require('express');
+const multer = require('multer');
 
 const router = express.Router();
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'data/uploads/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${file.fieldname}-${Date.now()}.jpg`);
+  },
+});
+
+const upload = multer({ storage });
 
 const authenticator = require('../../middlewares/auth');
 const controller = require('../../controllers/v1/user');
@@ -15,6 +27,10 @@ router.get(
 router.get('/profile', authenticator(), controller.getProfile);
 router.patch('/profile', authenticator(), controller.updateProfile);
 router.patch('/socials', authenticator(), controller.updateSocials);
-router.patch('/avatar', authenticator(), controller.updateAvatar);
+router.post(
+  '/avatar',
+  [authenticator(), upload.single('avatar')],
+  controller.updateAvatar,
+);
 
 module.exports = router;

@@ -24,10 +24,4 @@ module.exports = {
       .withMessage('Twitter handle should be a URL')
       .optional(),
   ],
-  updateAvatar: [
-    body('profileImage')
-      .isString()
-      .notEmpty()
-      .withMessage('Profile Image is required'),
-  ],
 };
