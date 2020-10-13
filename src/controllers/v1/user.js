@@ -1,6 +1,7 @@
 const create = require('../create');
 const User = require('../../models/User');
 const validators = require('../../validators/user');
+// const upload = require('../../middlewares/imageUpload')
 
 module.exports = {
   getProfile: create(async (req, res) => {
@@ -90,7 +91,12 @@ module.exports = {
   ),
 
   updateAvatar: create(async (req, res) => {
-    if (!req.file) return res.status(400).send('No file received!');
+    if (req.fileValidationError) {
+      return res.status(400).send(req.fileValidationError);
+    }
+    if (!req.file) {
+      return res.status(400).send('No file received!');
+    }
 
     return res.status(200).send('File uploaded!');
   }),
