@@ -1,7 +1,6 @@
 const create = require('../create');
 const User = require('../../models/User');
 const validators = require('../../validators/user');
-// const upload = require('../../middlewares/imageUpload')
 
 module.exports = {
   getProfile: create(async (req, res) => {
