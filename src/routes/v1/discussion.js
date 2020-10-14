@@ -11,5 +11,10 @@ router.get('/:discussion_id/comments', authenticator(), controller.getComments);
 router.post('/', authenticator(), controller.postDiscussion);
 router.post('/comment', authenticator(), controller.postComment);
 router.post('/:discussionId', authenticator(), controller.reportDiscussion);
+router.post(
+  '/:discussionId/comment/:commentId',
+  authenticator(),
+  controller.reportDiscussionComment,
+);
 
 module.exports = router;

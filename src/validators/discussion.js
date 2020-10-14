@@ -17,4 +17,7 @@ module.exports = {
   reportDiscussion: [
     body('reason').isString().notEmpty().withMessage('Reason is required'),
   ],
+  reportDiscussionComment: [
+    body('reason').isString().notEmpty().withMessage('Reason is required'),
+  ],
 };
