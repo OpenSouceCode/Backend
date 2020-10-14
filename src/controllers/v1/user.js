@@ -91,12 +91,20 @@ module.exports = {
 
   updateAvatar: create(async (req, res) => {
     if (req.fileValidationError) {
-      return res.status(400).send(req.fileValidationError);
+      return res.status(400).json({ message: req.fileValidationError });
     }
     if (!req.file) {
-      return res.status(400).send('No file received!');
+      return res.status(400).json({ message: 'No file received!' });
     }
 
-    return res.status(200).send('File uploaded!');
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      {
+        profileImage: req.file.path,
+      },
+      { new: true },
+    ).select(User.getProfileFields().join(' '));
+
+    return res.json({ data: user });
   }),
 };
