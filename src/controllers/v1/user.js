@@ -97,10 +97,12 @@ module.exports = {
       return res.status(400).json({ message: 'No file received!' });
     }
 
+    const imagePath = req.file.path.split('/').slice(1).join('/');
+
     const user = await User.findByIdAndUpdate(
       req.user.id,
       {
-        profileImage: req.file.path,
+        profileImage: imagePath,
       },
       { new: true },
     ).select(User.getProfileFields().join(' '));
