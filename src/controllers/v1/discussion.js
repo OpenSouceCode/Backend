@@ -5,6 +5,7 @@ const DiscussionComment = require('../../models/DiscussionComment');
 const validators = require('../../validators/discussion');
 const ReportDiscussionDetails = require('../../models/ReportDiscussionDetails');
 const ReportDiscussionCommentDetails = require('../../models/ReportDiscussionCommentDetails');
+const { STATUS } = require('../../config/index');
 
 module.exports = {
   getDiscussions: create(async (req, res) => {
@@ -119,7 +120,9 @@ module.exports = {
       });
 
       if (hasReportDiscussionDetails) {
-        return res.status(400).json({ message: 'Discussion already reported' });
+        return res
+          .status(STATUS.BAD_REQUEST)
+          .json({ message: 'Discussion already reported' });
       }
 
       const newReportDiscussionDetails = new ReportDiscussionDetails({
@@ -154,7 +157,9 @@ module.exports = {
       );
 
       if (hasReportDiscussionCommentDetails) {
-        return res.status(400).json({ message: 'Comment already reported' });
+        return res
+          .status(STATUS.BAD_REQUEST)
+          .json({ message: 'Comment already reported' });
       }
 
       const newReportDiscussionCommentDetails = new ReportDiscussionCommentDetails(

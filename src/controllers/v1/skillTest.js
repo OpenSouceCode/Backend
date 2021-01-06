@@ -2,7 +2,7 @@ const create = require('../create');
 const SkillTest = require('../../models/SkillTest');
 const SkillTestQuestion = require('../../models/SkillTestQuestion');
 const validators = require('../../validators/skillTest');
-const ROLES = require('../../config/roles');
+const { ROLES, STATUS } = require('../../config');
 
 const assignProperties = (from, to) =>
   Object.keys(from).forEach((key) => to.setAttribute(key, from[key]));
@@ -38,7 +38,7 @@ module.exports = {
 
     if (!skillTest.isPublished && req.user.role !== ROLES.ADMIN) {
       return res
-        .status(403)
+        .status(STATUS.FORBIDDEN)
         .send('The user is forbidden to access the skill test');
     }
 
@@ -140,7 +140,7 @@ module.exports = {
       }
 
       if (correctIndex && (correctIndex < 0 || correctIndex >= optionsLength)) {
-        return res.status(400).send('Bad request');
+        return res.status(STATUS.BAD_REQUEST).send('Bad request');
       }
 
       assignProperties(res.locals.inputBody, skillTestQuestion);
@@ -164,7 +164,7 @@ module.exports = {
     await SkillTestQuestion.deleteMany({ testId: id });
     await SkillTest.deleteOne({ _id: id });
 
-    res.status(200).send('Skill Test removed successfully');
+    res.status(STATUS.OK).send('Skill Test removed successfully');
   }),
 
   deleteSkillTestQuestion: create(async (req, res) => {
@@ -172,7 +172,7 @@ module.exports = {
 
     await SkillTestQuestion.findByIdAndRemove(questionId);
 
-    res.status(200).send('Skill Test Question removed successfully');
+    res.status(STATUS.OK).send('Skill Test Question removed successfully');
   }),
 
   publishSkillTest: create(async (req, res) => {
@@ -186,7 +186,7 @@ module.exports = {
       { new: true },
     );
 
-    res.status(200).send('Skill Test published successfully');
+    res.status(STATUS.OK).send('Skill Test published successfully');
   }),
 
   unpublishSkillTest: create(async (req, res) => {
@@ -200,6 +200,6 @@ module.exports = {
       { new: true },
     );
 
-    res.status(200).send('Skill Test unpublished successfully');
+    res.status(STATUS.OK).send('Skill Test unpublished successfully');
   }),
 };

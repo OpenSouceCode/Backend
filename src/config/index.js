@@ -4,7 +4,16 @@
  */
 const dotenv = require('dotenv');
 
+const { STATUS } = require('./responseConstants');
+
+const ROLES = require('./roles');
+
 dotenv.config();
+
+/**
+ *
+ * @param {Stirng} key Name used to save enviromental variable in .env file
+ */
 
 const getEnvVariable = (key) => {
   const value = process.env[key];
@@ -29,6 +38,8 @@ const config = {
   },
   API_URL: getEnvVariable('API_URL'),
   FRONTEND_LOGIN_URL: getEnvVariable('FRONTEND_LOGIN_URL'),
+  STATUS,
+  ROLES,
 };
 
 module.exports = config;
